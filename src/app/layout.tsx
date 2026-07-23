@@ -15,9 +15,17 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "VelocityRE.pro | AI Property-Listing Target Platform",
-  description: "Identify high-probability property listing opportunities before they hit the open MLS. AI-powered property data points delivered directly to your phone map.",
-  keywords: ["real estate", "AI real estate", "property listing intelligence", "MLS predictor", "off-market properties", "Golden Pins"],
+  title: "VelocityRE.pro | Predictive Seller Leads With a Closing Guarantee",
+  description:
+    "Reach likely home sellers before they list. Get 50 or 100 contact-ready seller opportunities, protected territory, and a closing guarantee under program terms.",
+  keywords: [
+    "predictive seller leads",
+    "real estate seller leads",
+    "likely to list homeowners",
+    "AI real estate prospecting",
+    "pre-MLS seller opportunities",
+    "exclusive real estate territory",
+  ],
   authors: [{ name: "VelocityRE.pro" }],
 };
 
@@ -34,10 +42,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${plusJakartaSans.variable} ${inter.variable}`}>
-      <body style={{ margin: 0, padding: 0 }}>
-        {children}
-      </body>
+      <body style={{ margin: 0, padding: 0 }}>{children}</body>
     </html>
   );
 }
-
