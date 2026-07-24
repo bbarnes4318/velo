@@ -1,0 +1,1 @@
+Native tel: handoff is handled globally by NativeCallBridge.tsx.
