@@ -2,6 +2,9 @@
 
 import { useEffect } from 'react';
 
+const LEGACY_DEMO_PHONE = 'tel:5550199';
+const COMPLETE_DEMO_PHONE = 'tel:+12025550199';
+
 /**
  * Lets tel: links hand off directly to the device's native calling UI.
  *
@@ -18,8 +21,13 @@ export default function NativeCallBridge() {
       const link = target.closest<HTMLAnchorElement>('a[href^="tel:"]');
       if (!link) return;
 
-      const phoneUrl = link.getAttribute('href');
-      if (!phoneUrl) return;
+      const rawPhoneUrl = link.getAttribute('href');
+      if (!rawPhoneUrl) return;
+
+      // Preserve future real lead numbers while completing the legacy demo value.
+      const phoneUrl = rawPhoneUrl === LEGACY_DEMO_PHONE
+        ? COMPLETE_DEMO_PHONE
+        : rawPhoneUrl;
 
       // Cancel React demo handlers while preserving a direct user-initiated handoff.
       event.preventDefault();
