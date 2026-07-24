@@ -97,7 +97,7 @@ export default function InvestmentCalculator() {
   if (!host) return null;
 
   return createPortal(
-    <section className={styles.section} id="listing-investment-calculator">
+    <div className={styles.section} id="listing-investment-calculator">
       <div className={styles.backdrop} aria-hidden="true" />
 
       <div className={styles.container}>
@@ -229,7 +229,7 @@ export default function InvestmentCalculator() {
           </div>
         </div>
       </div>
-    </section>,
+    </div>,
     host,
   );
 }
