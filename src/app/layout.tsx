@@ -4,6 +4,7 @@ import NativeCallBridge from "./components/NativeCallBridge";
 import "./globals.css";
 import "./process-section.css";
 import "./outcome-section.css";
+import "./results-section.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
