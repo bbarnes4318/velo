@@ -8,48 +8,29 @@ type PlanId = 'self' | 'concierge';
 
 type Plan = {
   id: PlanId;
-  eyebrow: string;
   name: string;
-  shortName: string;
+  selectorLabel: string;
+  selectorCopy: string;
   investment: number;
-  monthlyCost: number;
-  successFee: number;
-  description: string;
-  bullets: string[];
+  investmentDetail: string;
 };
 
 const PLANS: Record<PlanId, Plan> = {
   self: {
     id: 'self',
-    eyebrow: 'You handle the conversations',
-    name: 'Agent-Driven Listing Program',
-    shortName: 'I call the leads',
+    name: 'Agent-Driven Program',
+    selectorLabel: 'I call and book the appointments',
+    selectorCopy: '50 new seller leads every month',
     investment: 949,
-    monthlyCost: 949,
-    successFee: 0,
-    description:
-      'Receive 50 new seller opportunities every month. You call the homeowners and set your own listing appointments.',
-    bullets: [
-      '50 new seller opportunities each month',
-      'You call and schedule the appointments',
-      'One listing guaranteed under program terms',
-    ],
+    investmentDetail: '$949 monthly program investment',
   },
   concierge: {
     id: 'concierge',
-    eyebrow: 'We create the appointments',
-    name: 'Appointment-Setting Listing Program',
-    shortName: 'Book appointments for me',
+    name: 'Done-for-You Appointment Program',
+    selectorLabel: 'Call the leads and book appointments for me',
+    selectorCopy: '50 new seller leads plus appointment setting',
     investment: 1898,
-    monthlyCost: 949,
-    successFee: 949,
-    description:
-      'Receive 50 new seller opportunities every month while our team calls the leads and schedules appointments for you.',
-    bullets: [
-      '50 new seller opportunities each month',
-      'Our team calls and schedules appointments',
-      '$949 success fee only on the first listing',
-    ],
+    investmentDetail: '$949 program + $949 only after the first listing',
   },
 };
 
@@ -75,25 +56,28 @@ export default function InvestmentCalculator() {
 
     const originalContent = pricingSection.querySelector<HTMLElement>(':scope > .premium-container');
     const calculatorHost = document.createElement('div');
-    calculatorHost.setAttribute('data-investment-calculator-host', 'true');
+    const previousStyle = pricingSection.getAttribute('style');
 
-    const previousPadding = pricingSection.style.padding;
-    const previousBackground = pricingSection.style.background;
-    const previousBorder = pricingSection.style.border;
+    calculatorHost.setAttribute('data-investment-calculator-host', 'true');
+    calculatorHost.style.width = '100%';
+    calculatorHost.style.flex = '0 0 100%';
 
     if (originalContent) originalContent.hidden = true;
-    pricingSection.style.padding = '0';
-    pricingSection.style.background = 'transparent';
-    pricingSection.style.border = '0';
+    pricingSection.style.setProperty('padding', '0', 'important');
+    pricingSection.style.setProperty('background', 'transparent', 'important');
+    pricingSection.style.setProperty('border', '0', 'important');
+    pricingSection.style.setProperty('display', 'block', 'important');
+    pricingSection.style.setProperty('height', 'auto', 'important');
+    pricingSection.style.setProperty('min-height', '0', 'important');
+    pricingSection.style.setProperty('overflow', 'visible', 'important');
     pricingSection.appendChild(calculatorHost);
     setHost(calculatorHost);
 
     return () => {
       calculatorHost.remove();
       if (originalContent) originalContent.hidden = false;
-      pricingSection.style.padding = previousPadding;
-      pricingSection.style.background = previousBackground;
-      pricingSection.style.border = previousBorder;
+      if (previousStyle === null) pricingSection.removeAttribute('style');
+      else pricingSection.setAttribute('style', previousStyle);
     };
   }, []);
 
@@ -101,16 +85,9 @@ export default function InvestmentCalculator() {
 
   const calculations = useMemo(() => {
     const estimatedNet = commission - plan.investment;
-    const roiPercent = (estimatedNet / plan.investment) * 100;
     const returnMultiple = commission / plan.investment;
-    const investmentShare = Math.min(100, (plan.investment / commission) * 100);
 
-    return {
-      estimatedNet,
-      roiPercent,
-      returnMultiple,
-      investmentShare,
-    };
+    return { estimatedNet, returnMultiple };
   }, [commission, plan.investment]);
 
   const scrollToAvailability = () => {
@@ -120,85 +97,101 @@ export default function InvestmentCalculator() {
   if (!host) return null;
 
   return createPortal(
-    <div className={styles.section} id="listing-investment-calculator">
-      <div className={styles.gridTexture} aria-hidden="true" />
-      <div className={styles.glowOne} aria-hidden="true" />
-      <div className={styles.glowTwo} aria-hidden="true" />
+    <section className={styles.section} id="listing-investment-calculator">
+      <div className={styles.backdrop} aria-hidden="true" />
 
       <div className={styles.container}>
-        <header className={styles.header}>
+        <div className={styles.heading}>
           <div className={styles.badge}>
-            <span className={styles.badgePulse} />
-            LISTING INVESTMENT CALCULATOR
+            <span /> GUARANTEED-LISTING CALCULATOR
           </div>
-          <h2 className={styles.title}>
-            One Guaranteed Listing.
-            <span> See What It Could Be Worth.</span>
+          <h2>
+            One Listing Guaranteed. <strong>See the Estimated Return.</strong>
           </h2>
-          <p className={styles.intro}>
-            Pick how much work you want us to handle, then adjust your average take-home commission. The listing is guaranteed under program terms; commission earnings are estimated.
+          <p>
+            Choose who handles the calls, then compare your total first-listing investment with your typical take-home commission.
           </p>
-        </header>
+        </div>
 
-        <div className={styles.calculatorShell}>
-          <div className={styles.controlsPanel}>
-            <div className={styles.panelLabel}>01 — CHOOSE YOUR PROGRAM</div>
+        <div className={styles.calculator}>
+          <div className={styles.planSelector} role="radiogroup" aria-label="Choose your listing program">
+            {(Object.values(PLANS) as Plan[]).map((option) => {
+              const active = option.id === planId;
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  className={`${styles.planOption} ${active ? styles.planOptionActive : ''}`}
+                  onClick={() => setPlanId(option.id)}
+                >
+                  <span className={styles.radio} aria-hidden="true"><span /></span>
+                  <span className={styles.planCopy}>
+                    <strong>{option.selectorLabel}</strong>
+                    <small>{option.selectorCopy}</small>
+                  </span>
+                  <span className={styles.planPrice}>{currency.format(option.investment)}</span>
+                </button>
+              );
+            })}
+          </div>
 
-            <div className={styles.planSelector} role="radiogroup" aria-label="Listing program">
-              {(Object.values(PLANS) as Plan[]).map((option) => {
-                const selected = option.id === planId;
-                return (
-                  <button
-                    type="button"
-                    key={option.id}
-                    className={`${styles.planButton} ${selected ? styles.planButtonActive : ''}`}
-                    onClick={() => setPlanId(option.id)}
-                    role="radio"
-                    aria-checked={selected}
-                  >
-                    <span className={styles.radioMark} aria-hidden="true">
-                      <span />
-                    </span>
-                    <span className={styles.planButtonCopy}>
-                      <strong>{option.shortName}</strong>
-                      <small>
-                        {option.id === 'self'
-                          ? '$949 total first-listing investment'
-                          : '$949 now + $949 on first listing'}
-                      </small>
-                    </span>
-                    <span className={styles.planButtonPrice}>{currency.format(option.investment)}</span>
-                  </button>
-                );
-              })}
+          <div className={styles.programLine}>
+            <span>{plan.name}</span>
+            <small>{plan.investmentDetail}</small>
+          </div>
+
+          <div className={styles.moneyFlow}>
+            <div className={styles.flowCard}>
+              <span>YOU INVEST</span>
+              <strong>{currency.format(plan.investment)}</strong>
+              <small>Total first-listing cost</small>
             </div>
 
-            <div className={styles.selectedPlanCard}>
-              <div className={styles.selectedPlanTopline}>
-                <span>{plan.eyebrow}</span>
-                <strong>{currency.format(plan.monthlyCost)}/mo</strong>
-              </div>
-              <h3>{plan.name}</h3>
-              <p>{plan.description}</p>
-              <ul>
-                {plan.bullets.map((bullet) => (
-                  <li key={bullet}>
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M20 6 9 17l-5-5" />
-                    </svg>
-                    {bullet}
-                  </li>
-                ))}
-              </ul>
+            <div className={styles.flowArrow} aria-hidden="true">
+              <span />
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </div>
+
+            <div className={`${styles.flowCard} ${styles.guaranteeCard}`}>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
+                <path d="m9 12 2 2 4-4" />
+              </svg>
+              <span>PROGRAM GUARANTEE</span>
+              <strong>1 LISTING</strong>
+              <small>Under written program terms</small>
+            </div>
+
+            <div className={styles.flowArrow} aria-hidden="true">
+              <span />
+              <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </div>
+
+            <div className={`${styles.flowCard} ${styles.commissionCard}`}>
+              <span>ESTIMATED TAKE-HOME</span>
+              <strong>{currency.format(commission)}</strong>
+              <small>From one closed listing</small>
+            </div>
+          </div>
+
+          <div className={styles.bottomGrid}>
+            <div className={styles.netCard}>
+              <span>ESTIMATED NET AFTER PROGRAM COST</span>
+              <strong>{currency.format(calculations.estimatedNet)}</strong>
+              <p>
+                That is an estimated <b>{calculations.returnMultiple.toFixed(1)}×</b> gross return on your first-listing investment.
+              </p>
             </div>
 
             <div className={styles.commissionControl}>
-              <div className={styles.commissionHeader}>
+              <div className={styles.controlTop}>
                 <div>
-                  <div className={styles.panelLabel}>02 — YOUR AVERAGE TAKE-HOME COMMISSION</div>
-                  <p>Adjust this to match your typical net commission from one closed listing.</p>
+                  <span>YOUR AVERAGE TAKE-HOME COMMISSION</span>
+                  <small>Adjust this to match your business.</small>
                 </div>
-                <label className={styles.currencyInput}>
+                <label>
                   <span>$</span>
                   <input
                     type="number"
@@ -206,8 +199,8 @@ export default function InvestmentCalculator() {
                     max="50000"
                     step="250"
                     value={commission}
-                    onChange={(event) => setCommission(clampCommission(Number(event.target.value)))}
                     aria-label="Average take-home commission"
+                    onChange={(event) => setCommission(clampCommission(Number(event.target.value)))}
                   />
                 </label>
               </div>
@@ -218,134 +211,25 @@ export default function InvestmentCalculator() {
                 max="20000"
                 step="250"
                 value={Math.min(20000, commission)}
-                onChange={(event) => setCommission(Number(event.target.value))}
                 aria-label="Adjust average take-home commission"
+                onChange={(event) => setCommission(Number(event.target.value))}
               />
-              <div className={styles.rangeLabels}>
-                <span>$1,000</span>
-                <span>$20,000+</span>
-              </div>
+              <div className={styles.rangeLabels}><span>$1,000</span><span>$20,000+</span></div>
             </div>
           </div>
 
-          <div className={styles.returnPanel}>
-            <div className={styles.returnHeader}>
-              <div>
-                <div className={styles.panelLabel}>YOUR FIRST-LISTING ECONOMICS</div>
-                <h3>{plan.shortName}</h3>
-              </div>
-              <div className={styles.liveBadge}>
-                <span /> LIVE ESTIMATE
-              </div>
-            </div>
-
-            <div className={styles.guaranteeBanner}>
-              <div className={styles.shield} aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" />
-                  <path d="m9 12 2 2 4-4" />
-                </svg>
-              </div>
-              <div>
-                <span>PROGRAM OUTCOME</span>
-                <strong>1 LISTING GUARANTEED</strong>
-                <small>Subject to written eligibility and activity requirements</small>
-              </div>
-            </div>
-
-            <div className={styles.moneyPath}>
-              <div className={styles.moneyNode}>
-                <span>YOUR INVESTMENT</span>
-                <strong>{currency.format(plan.investment)}</strong>
-                <small>
-                  {plan.successFee > 0
-                    ? `$${plan.monthlyCost} program + $${plan.successFee} first-listing fee`
-                    : 'Complete first-listing investment'}
-                </small>
-              </div>
-              <div className={styles.arrow} aria-hidden="true">
-                <span />
-                <svg viewBox="0 0 24 24">
-                  <path d="M5 12h14M13 6l6 6-6 6" />
-                </svg>
-              </div>
-              <div className={`${styles.moneyNode} ${styles.moneyNodeGold}`}>
-                <span>ESTIMATED TAKE-HOME</span>
-                <strong>{currency.format(commission)}</strong>
-                <small>From one closed listing</small>
-              </div>
-            </div>
-
-            <div className={styles.netGainBlock}>
-              <span>ESTIMATED NET AFTER PROGRAM COST</span>
-              <strong className={calculations.estimatedNet >= 0 ? '' : styles.negative}>
-                {currency.format(calculations.estimatedNet)}
-              </strong>
-              <p>
-                {calculations.estimatedNet >= 0
-                  ? `Your estimated commission is ${currency.format(calculations.estimatedNet)} more than your first-listing investment.`
-                  : 'Increase the estimated commission to see a positive projected return.'}
-              </p>
-            </div>
-
-            <div className={styles.metricsGrid}>
-              <div className={styles.metric}>
-                <span>RETURN MULTIPLE</span>
-                <strong>{calculations.returnMultiple.toFixed(1)}×</strong>
-                <small>Estimated commission ÷ investment</small>
-              </div>
-              <div className={styles.metric}>
-                <span>ESTIMATED ROI</span>
-                <strong>{Math.round(calculations.roiPercent)}%</strong>
-                <small>Net return relative to cost</small>
-              </div>
-              <div className={styles.metric}>
-                <span>COST OF EST. COMMISSION</span>
-                <strong>{calculations.investmentShare.toFixed(1)}%</strong>
-                <small>Program investment as a share</small>
-              </div>
-            </div>
-
-            <div className={styles.comparisonBar}>
-              <div className={styles.comparisonLabels}>
-                <span>Program investment</span>
-                <strong>{currency.format(plan.investment)} of {currency.format(commission)}</strong>
-              </div>
-              <div className={styles.track}>
-                <span style={{ width: `${calculations.investmentShare}%` }} />
-              </div>
-            </div>
-
-            <button type="button" className={styles.cta} onClick={scrollToAvailability}>
-              <span>Check My Territory</span>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M5 12h14M13 6l6 6-6 6" />
-              </svg>
+          <div className={styles.actionRow}>
+            <p>
+              The listing guarantee is contractual and subject to written eligibility and activity requirements. Commission and earnings are estimates, not guarantees.
+            </p>
+            <button type="button" onClick={scrollToAvailability}>
+              Check My Territory
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
             </button>
           </div>
         </div>
-
-        <div className={styles.bottomStrip}>
-          <div>
-            <span>50</span>
-            <small>New seller opportunities monthly</small>
-          </div>
-          <div className={styles.bottomDivider} />
-          <div>
-            <span>1</span>
-            <small>Listing guaranteed under program terms</small>
-          </div>
-          <div className={styles.bottomDivider} />
-          <div>
-            <span>{plan.successFee > 0 ? '$949 + $949' : '$949'}</span>
-            <small>{plan.successFee > 0 ? 'First-listing investment' : 'Total program investment'}</small>
-          </div>
-          <p>
-            The guarantee applies to securing one listing under the written program terms. Commission, closing, timing, and earnings are estimates and are not guaranteed.
-          </p>
-        </div>
       </div>
-    </div>,
+    </section>,
     host,
   );
 }
