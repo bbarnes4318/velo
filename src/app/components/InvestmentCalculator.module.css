@@ -1,0 +1,866 @@
+.section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 100svh;
+  padding: clamp(58px, 7vh, 82px) 0;
+  color: #f7f4ec;
+  background:
+    radial-gradient(circle at 16% 18%, rgba(42, 108, 151, 0.24), transparent 31%),
+    radial-gradient(circle at 84% 76%, rgba(216, 166, 63, 0.2), transparent 30%),
+    linear-gradient(135deg, #03070d 0%, #07111e 44%, #0b1e30 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gridTexture {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  opacity: 0.48;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+}
+
+.glowOne,
+.glowTwo {
+  position: absolute;
+  z-index: -2;
+  border-radius: 999px;
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+.glowOne {
+  top: 22%;
+  left: -120px;
+  width: 360px;
+  height: 360px;
+  background: rgba(33, 96, 139, 0.17);
+}
+
+.glowTwo {
+  right: -100px;
+  bottom: 0;
+  width: 340px;
+  height: 340px;
+  background: rgba(216, 166, 63, 0.14);
+}
+
+.container {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.header {
+  max-width: 900px;
+  margin: 0 auto clamp(24px, 3vh, 34px);
+  text-align: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 14px;
+  padding: 8px 13px;
+  border: 1px solid rgba(242, 199, 102, 0.26);
+  border-radius: 999px;
+  color: #f2c766;
+  background: rgba(216, 166, 63, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.badgePulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f2c766;
+  box-shadow: 0 0 0 5px rgba(242, 199, 102, 0.08), 0 0 18px rgba(242, 199, 102, 0.6);
+  animation: roiPulse 1.8s ease-in-out infinite;
+}
+
+.title {
+  max-width: 850px;
+  margin: 0 auto;
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: clamp(34px, 4vw, 54px);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+}
+
+.title span {
+  color: #f2c766;
+}
+
+.intro {
+  max-width: 760px;
+  margin: 16px auto 0;
+  color: #aeb9c5;
+  font-size: 14px;
+  line-height: 1.6;
+  text-wrap: balance;
+}
+
+.calculatorShell {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  background: rgba(4, 10, 18, 0.84);
+  box-shadow:
+    0 34px 90px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px);
+}
+
+.controlsPanel,
+.returnPanel {
+  min-width: 0;
+  padding: clamp(24px, 3vw, 38px);
+}
+
+.controlsPanel {
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at 15% 15%, rgba(43, 107, 151, 0.13), transparent 33%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.returnPanel {
+  background:
+    radial-gradient(circle at 88% 8%, rgba(216, 166, 63, 0.13), transparent 32%),
+    linear-gradient(145deg, rgba(13, 36, 54, 0.7), rgba(5, 12, 21, 0.96));
+}
+
+.panelLabel {
+  color: #8391a0;
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: 0.15em;
+}
+
+.planSelector {
+  display: grid;
+  gap: 10px;
+  margin-top: 13px;
+}
+
+.planButton {
+  appearance: none;
+  width: 100%;
+  padding: 14px 15px;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  color: #f7f4ec;
+  background: rgba(255, 255, 255, 0.035);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.planButton:hover {
+  transform: translateY(-2px);
+  border-color: rgba(242, 199, 102, 0.3);
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.planButtonActive {
+  border-color: rgba(242, 199, 102, 0.48);
+  background: linear-gradient(110deg, rgba(216, 166, 63, 0.14), rgba(34, 91, 130, 0.12));
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.radioMark {
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 50%;
+}
+
+.planButtonActive .radioMark {
+  border-color: #f2c766;
+}
+
+.radioMark span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.planButtonActive .radioMark span {
+  background: #f2c766;
+  box-shadow: 0 0 12px rgba(242, 199, 102, 0.5);
+}
+
+.planButtonCopy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.planButtonCopy strong {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.planButtonCopy small {
+  color: #91a0af;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.planButtonPrice {
+  color: #f2c766;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.selectedPlanCard {
+  position: relative;
+  overflow: hidden;
+  margin-top: 14px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  background: rgba(5, 13, 23, 0.74);
+}
+
+.selectedPlanCard::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, #f2c766, #2f719b);
+}
+
+.selectedPlanTopline {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  color: #91a0af;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.selectedPlanTopline strong {
+  color: #f2c766;
+  white-space: nowrap;
+}
+
+.selectedPlanCard h3 {
+  margin: 10px 0 6px;
+  color: #ffffff;
+  font-size: 19px;
+  line-height: 1.2;
+}
+
+.selectedPlanCard p {
+  margin: 0;
+  color: #aeb9c5;
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+.selectedPlanCard ul {
+  margin: 14px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  list-style: none;
+}
+
+.selectedPlanCard li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #dce3e9;
+  font-size: 10.5px;
+  font-weight: 650;
+}
+
+.selectedPlanCard li svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: #f2c766;
+  stroke-width: 2.5;
+  flex: 0 0 auto;
+}
+
+.commissionControl {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.commissionHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.commissionHeader p {
+  max-width: 315px;
+  margin: 6px 0 0;
+  color: #8493a2;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.currencyInput {
+  min-width: 132px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  border: 1px solid rgba(242, 199, 102, 0.32);
+  border-radius: 12px;
+  color: #f2c766;
+  background: rgba(216, 166, 63, 0.07);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.currencyInput input {
+  min-width: 0;
+  width: 100%;
+  border: 0;
+  outline: 0;
+  color: #ffffff;
+  background: transparent;
+  font: inherit;
+}
+
+.currencyInput input::-webkit-outer-spin-button,
+.currencyInput input::-webkit-inner-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+.range {
+  width: 100%;
+  margin: 18px 0 0;
+  accent-color: #f2c766;
+  cursor: pointer;
+}
+
+.rangeLabels,
+.comparisonLabels {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #788795;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.returnHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.returnHeader h3 {
+  margin: 6px 0 0;
+  color: #ffffff;
+  font-size: 21px;
+  line-height: 1.2;
+}
+
+.liveBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 9px;
+  border: 1px solid rgba(65, 196, 135, 0.2);
+  border-radius: 999px;
+  color: #75dba8;
+  background: rgba(65, 196, 135, 0.07);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+.liveBadge span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #75dba8;
+  box-shadow: 0 0 10px rgba(117, 219, 168, 0.65);
+}
+
+.guaranteeBanner {
+  margin-top: 16px;
+  padding: 14px 15px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  border: 1px solid rgba(242, 199, 102, 0.28);
+  border-radius: 15px;
+  background: linear-gradient(100deg, rgba(216, 166, 63, 0.14), rgba(216, 166, 63, 0.035));
+}
+
+.shield {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(242, 199, 102, 0.34);
+  border-radius: 14px;
+  color: #f2c766;
+  background: rgba(216, 166, 63, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 25px rgba(216, 166, 63, 0.08);
+  flex: 0 0 auto;
+}
+
+.shield svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+.guaranteeBanner > div:last-child {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.guaranteeBanner span {
+  color: #9c8a62;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.guaranteeBanner strong {
+  margin-top: 2px;
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: 20px;
+  letter-spacing: -0.02em;
+}
+
+.guaranteeBanner small {
+  margin-top: 2px;
+  color: #99a5b2;
+  font-size: 8.5px;
+}
+
+.moneyPath {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 50px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.moneyNode {
+  min-width: 0;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.moneyNode span {
+  color: #82909e;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.moneyNode strong {
+  margin-top: 7px;
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: clamp(23px, 2.3vw, 32px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.moneyNode small {
+  margin-top: 8px;
+  color: #82909e;
+  font-size: 8.5px;
+  line-height: 1.35;
+}
+
+.moneyNodeGold {
+  border-color: rgba(242, 199, 102, 0.28);
+  background: linear-gradient(135deg, rgba(216, 166, 63, 0.14), rgba(216, 166, 63, 0.035));
+}
+
+.moneyNodeGold strong {
+  color: #f2c766;
+}
+
+.arrow {
+  display: grid;
+  place-items: center;
+  color: #f2c766;
+}
+
+.arrow span {
+  position: absolute;
+}
+
+.arrow svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  filter: drop-shadow(0 0 10px rgba(242, 199, 102, 0.35));
+}
+
+.netGainBlock {
+  margin-top: 14px;
+  padding: 17px 18px;
+  border: 1px solid rgba(77, 174, 230, 0.2);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(65, 147, 196, 0.16), transparent 42%),
+    rgba(19, 54, 78, 0.32);
+}
+
+.netGainBlock span {
+  color: #84a6bd;
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.netGainBlock strong {
+  display: block;
+  margin-top: 5px;
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: clamp(34px, 4vw, 52px);
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+
+.netGainBlock strong.negative {
+  color: #ff8c8c;
+}
+
+.netGainBlock p {
+  margin: 6px 0 0;
+  color: #aab8c4;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.metric {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.metric span {
+  color: #778694;
+  font-size: 7.5px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.09em;
+}
+
+.metric strong {
+  display: block;
+  margin-top: 5px;
+  color: #f2c766;
+  font-family: var(--font-display);
+  font-size: 21px;
+  line-height: 1;
+}
+
+.metric small {
+  display: block;
+  margin-top: 5px;
+  color: #748391;
+  font-size: 7.5px;
+  line-height: 1.25;
+}
+
+.comparisonBar {
+  margin-top: 13px;
+}
+
+.comparisonLabels strong {
+  color: #d8e0e7;
+}
+
+.track {
+  position: relative;
+  overflow: hidden;
+  height: 7px;
+  margin-top: 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.track span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  min-width: 2%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #2d709b, #f2c766);
+  box-shadow: 0 0 16px rgba(242, 199, 102, 0.28);
+  transition: width 260ms ease;
+}
+
+.cta {
+  appearance: none;
+  width: 100%;
+  margin-top: 14px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 12px;
+  color: #07101d;
+  background: linear-gradient(135deg, #f2c766, #d8a63f);
+  box-shadow: 0 15px 35px rgba(216, 166, 63, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  font-size: 12px;
+  font-weight: 850;
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 42px rgba(216, 166, 63, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.cta svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.bottomStrip {
+  margin-top: 16px;
+  padding: 14px 18px;
+  display: grid;
+  grid-template-columns: auto 1px auto 1px auto minmax(240px, 1fr);
+  align-items: center;
+  gap: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.bottomStrip > div:not(.bottomDivider) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bottomStrip span {
+  color: #f2c766;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.bottomStrip small {
+  max-width: 120px;
+  color: #9ca9b5;
+  font-size: 8px;
+  line-height: 1.25;
+}
+
+.bottomDivider {
+  width: 1px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.bottomStrip p {
+  margin: 0;
+  color: #6f7e8c;
+  font-size: 7.5px;
+  line-height: 1.35;
+  text-align: right;
+}
+
+@keyframes roiPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.76); opacity: 0.55; }
+}
+
+@media (max-width: 980px) {
+  .section {
+    min-height: 0;
+  }
+
+  .calculatorShell {
+    grid-template-columns: 1fr;
+  }
+
+  .controlsPanel {
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .bottomStrip {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .bottomStrip p {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+
+  .bottomDivider {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .section {
+    padding: 54px 0;
+  }
+
+  .container {
+    width: min(100% - 24px, 1180px);
+  }
+
+  .title {
+    font-size: 34px;
+  }
+
+  .controlsPanel,
+  .returnPanel {
+    padding: 22px 16px;
+  }
+
+  .planButton {
+    grid-template-columns: 22px minmax(0, 1fr);
+  }
+
+  .planButtonPrice {
+    grid-column: 2;
+  }
+
+  .commissionHeader {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .currencyInput {
+    width: 100%;
+  }
+
+  .moneyPath {
+    grid-template-columns: 1fr;
+  }
+
+  .arrow {
+    height: 26px;
+    transform: rotate(90deg);
+  }
+
+  .metricsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .bottomStrip {
+    grid-template-columns: 1fr;
+  }
+
+  .bottomStrip > div:not(.bottomDivider) {
+    justify-content: space-between;
+  }
+
+  .bottomStrip small {
+    max-width: 190px;
+    text-align: right;
+  }
+}
+
+@media (max-height: 780px) and (min-width: 981px) {
+  .section {
+    min-height: 0;
+    padding: 42px 0;
+  }
+
+  .header {
+    margin-bottom: 20px;
+  }
+
+  .title {
+    font-size: 40px;
+  }
+
+  .controlsPanel,
+  .returnPanel {
+    padding: 24px 28px;
+  }
+
+  .selectedPlanCard {
+    padding: 14px 16px;
+  }
+
+  .commissionControl {
+    margin-top: 13px;
+    padding-top: 13px;
+  }
+
+  .guaranteeBanner,
+  .moneyPath,
+  .netGainBlock,
+  .metricsGrid,
+  .comparisonBar,
+  .cta {
+    margin-top: 10px;
+  }
+}
