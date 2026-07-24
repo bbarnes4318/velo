@@ -1,0 +1,367 @@
+/* Premium visual system for the "Most Predictive Tools" outcome section. */
+#difference {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: #f7f4ec;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(216, 166, 63, 0.14) 0%, rgba(216, 166, 63, 0.025) 24%, transparent 46%),
+    radial-gradient(circle at 12% 12%, rgba(43, 107, 151, 0.18) 0%, transparent 32%),
+    radial-gradient(circle at 90% 86%, rgba(27, 72, 107, 0.17) 0%, transparent 35%),
+    linear-gradient(140deg, #03070d 0%, #07101d 46%, #0b1726 100%) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#difference::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0.62;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 38px 38px;
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
+}
+
+#difference::after {
+  content: "OUTCOME";
+  position: absolute;
+  right: -24px;
+  bottom: -42px;
+  z-index: -1;
+  color: rgba(255, 255, 255, 0.018);
+  font-family: var(--font-display);
+  font-size: clamp(110px, 16vw, 230px);
+  font-weight: 800;
+  line-height: 0.8;
+  letter-spacing: -0.075em;
+  pointer-events: none;
+}
+
+#difference > .premium-container {
+  position: relative;
+  width: 100%;
+}
+
+#difference [class*="sectionHeader"] {
+  max-width: 940px !important;
+  margin: 0 auto clamp(18px, 2.4vh, 28px) !important;
+  text-align: center;
+}
+
+#difference [class*="sectionHeader"]::before {
+  content: "THE OUTCOME ENGINE";
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding: 7px 13px;
+  border: 1px solid rgba(242, 199, 102, 0.28);
+  border-radius: 999px;
+  color: #f2c766;
+  background: rgba(216, 166, 63, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 10px 30px rgba(0, 0, 0, 0.18);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.17em;
+}
+
+#difference [class*="sectionHeader"]::after {
+  content: "SIGNAL  →  PRIORITY  →  CONVERSATION  →  LISTING";
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 14px auto 0;
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  color: #91a1b2;
+  background: rgba(255, 255, 255, 0.035);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+#difference [class*="sectionTitle"] {
+  max-width: 920px;
+  margin-inline: auto;
+  color: #ffffff !important;
+  text-shadow: 0 16px 55px rgba(0, 0, 0, 0.38);
+  font-size: clamp(32px, 3vw, 44px) !important;
+  line-height: 1.04 !important;
+  letter-spacing: -0.045em !important;
+  text-wrap: balance;
+}
+
+#difference [class*="sectionIntro"] {
+  max-width: 790px;
+  margin-inline: auto;
+  color: #aeb8c5 !important;
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+  text-wrap: balance;
+}
+
+#difference [class*="matrixGrid"] {
+  position: relative;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  gap: 14px 128px !important;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 6px 0;
+  counter-reset: outcome-card;
+}
+
+#difference [class*="matrixGrid"]::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  transform: translateX(-50%);
+  background: linear-gradient(to bottom, transparent 0%, rgba(216, 166, 63, 0.2) 14%, #d8a63f 50%, rgba(216, 166, 63, 0.2) 86%, transparent 100%);
+  box-shadow: 0 0 30px rgba(216, 166, 63, 0.28);
+}
+
+#difference [class*="matrixGrid"]::after {
+  content: "VELOCITYRE\A OUTCOME\A ENGINE";
+  white-space: pre-line;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 104px;
+  height: 104px;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(242, 199, 102, 0.54);
+  border-radius: 50%;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 36% 26%, rgba(255, 255, 255, 0.13), transparent 31%),
+    linear-gradient(145deg, #193b58 0%, #0b1c2d 55%, #070d16 100%);
+  box-shadow:
+    0 0 0 9px rgba(216, 166, 63, 0.045),
+    0 0 0 18px rgba(216, 166, 63, 0.025),
+    0 20px 55px rgba(0, 0, 0, 0.46),
+    inset 0 1px 0 rgba(255, 255, 255, 0.13);
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: 0.08em;
+  z-index: 5;
+}
+
+#difference [class*="matrixCard"] {
+  counter-increment: outcome-card;
+  position: relative;
+  z-index: 2;
+  min-height: 92px !important;
+  padding: 17px 18px !important;
+  display: grid !important;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: center !important;
+  gap: 14px !important;
+  overflow: visible;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 15px !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.075) 0%, rgba(255, 255, 255, 0.025) 100%) !important;
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.055);
+  backdrop-filter: blur(10px);
+  transition: transform 220ms ease, border-color 220ms ease, background 220ms ease, box-shadow 220ms ease;
+}
+
+#difference [class*="matrixCard"]::before {
+  content: "0" counter(outcome-card);
+  position: absolute;
+  top: 9px;
+  right: 11px;
+  color: rgba(255, 255, 255, 0.19);
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+#difference [class*="matrixCard"]::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 64px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(216, 166, 63, 0.06), rgba(216, 166, 63, 0.75));
+  box-shadow: 0 0 12px rgba(216, 166, 63, 0.26);
+  pointer-events: none;
+}
+
+#difference [class*="matrixCard"]:nth-child(odd)::after {
+  right: -64px;
+}
+
+#difference [class*="matrixCard"]:nth-child(even)::after {
+  left: -64px;
+  transform: rotate(180deg);
+}
+
+#difference [class*="matrixCard"]:hover {
+  transform: translateY(-4px) scale(1.01) !important;
+  border-color: rgba(242, 199, 102, 0.38) !important;
+  background:
+    linear-gradient(135deg, rgba(30, 76, 111, 0.34) 0%, rgba(255, 255, 255, 0.035) 100%) !important;
+  box-shadow:
+    0 22px 55px rgba(0, 0, 0, 0.32),
+    0 0 0 1px rgba(216, 166, 63, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+#difference [class*="matrixIcon"] {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(242, 199, 102, 0.28);
+  border-radius: 12px;
+  color: #f2c766 !important;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1), transparent 34%),
+    rgba(216, 166, 63, 0.09);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 22px rgba(0, 0, 0, 0.17);
+}
+
+#difference [class*="matrixIcon"] svg {
+  width: 19px;
+  height: 19px;
+  filter: drop-shadow(0 0 8px rgba(216, 166, 63, 0.24));
+}
+
+#difference [class*="matrixText"] {
+  padding-right: 14px;
+  color: #f5f7fa !important;
+  font-size: 13px !important;
+  font-weight: 650 !important;
+  line-height: 1.42 !important;
+}
+
+#difference > .premium-container::after {
+  content: "THE PRODUCT ISN'T THE PREDICTION. IT'S THE NEXT CONVERSATION — BACKED BY PROTECTED TERRITORY AND A CLOSING GUARANTEE.";
+  display: block;
+  max-width: 1060px;
+  margin: 20px auto 0;
+  padding: 13px 20px;
+  border: 1px solid rgba(242, 199, 102, 0.22);
+  border-radius: 12px;
+  color: #f7f4ec;
+  background:
+    linear-gradient(90deg, rgba(216, 166, 63, 0.08), rgba(28, 72, 106, 0.22), rgba(216, 166, 63, 0.08));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055), 0 16px 42px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.45;
+  letter-spacing: 0.105em;
+}
+
+@media (min-width: 1025px) and (max-height: 780px) {
+  #difference [class*="sectionHeader"] {
+    margin-bottom: 15px !important;
+  }
+
+  #difference [class*="sectionHeader"]::before {
+    margin-bottom: 8px;
+    padding-block: 6px;
+  }
+
+  #difference [class*="sectionHeader"]::after {
+    margin-top: 9px;
+    padding-block: 6px;
+  }
+
+  #difference [class*="sectionTitle"] {
+    font-size: clamp(29px, 2.55vw, 38px) !important;
+    margin-bottom: 8px !important;
+  }
+
+  #difference [class*="matrixGrid"] {
+    gap: 10px 118px !important;
+  }
+
+  #difference [class*="matrixCard"] {
+    min-height: 82px !important;
+    padding: 13px 16px !important;
+  }
+
+  #difference > .premium-container::after {
+    margin-top: 14px;
+    padding-block: 10px;
+  }
+}
+
+@media (max-width: 1024px) {
+  #difference {
+    padding-block: 78px !important;
+  }
+
+  #difference [class*="sectionHeader"]::after {
+    white-space: normal;
+  }
+
+  #difference [class*="matrixGrid"] {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    max-width: 720px;
+  }
+
+  #difference [class*="matrixGrid"]::before,
+  #difference [class*="matrixGrid"]::after,
+  #difference [class*="matrixCard"]::after {
+    display: none;
+  }
+
+  #difference [class*="matrixCard"] {
+    min-height: 84px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #difference {
+    padding-block: 64px !important;
+  }
+
+  #difference [class*="sectionTitle"] {
+    font-size: 31px !important;
+  }
+
+  #difference [class*="sectionHeader"]::after {
+    border-radius: 12px;
+    line-height: 1.55;
+  }
+
+  #difference [class*="matrixCard"] {
+    grid-template-columns: 40px minmax(0, 1fr);
+    padding: 15px !important;
+  }
+
+  #difference [class*="matrixIcon"] {
+    width: 38px;
+    height: 38px;
+  }
+
+  #difference > .premium-container::after {
+    font-size: 9px;
+    letter-spacing: 0.075em;
+  }
+}
