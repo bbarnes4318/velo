@@ -6,6 +6,7 @@ import "./globals.css";
 import "./process-section.css";
 import "./outcome-section.css";
 import "./results-section.css";
+import "./modern-spacing.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
