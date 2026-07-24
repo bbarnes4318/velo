@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import NativeCallBridge from "./components/NativeCallBridge";
+import InvestmentCalculator from "./components/InvestmentCalculator";
 import "./globals.css";
 import "./process-section.css";
 import "./outcome-section.css";
@@ -21,7 +22,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "VelocityRE.pro | Predictive Seller Leads With a Closing Guarantee",
   description:
-    "Reach likely home sellers before they list. Get 50 or 100 contact-ready seller opportunities, protected territory, and a closing guarantee under program terms.",
+    "Reach likely home sellers before they list. Get 50 contact-ready seller opportunities each month, protected territory, and a closing guarantee under program terms.",
   keywords: [
     "predictive seller leads",
     "real estate seller leads",
@@ -48,6 +49,7 @@ export default function RootLayout({
     <html lang="en" className={`${plusJakartaSans.variable} ${inter.variable}`}>
       <body style={{ margin: 0, padding: 0 }}>
         <NativeCallBridge />
+        <InvestmentCalculator />
         {children}
       </body>
     </html>
