@@ -1,10 +1,16 @@
-name: Deploy Live VelocityRE
+name: Validate and Deploy Live VelocityRE
 
 on:
   pull_request:
     branches:
       - main
     paths:
+      - "src/**"
+      - "public/**"
+      - "package.json"
+      - "package-lock.json"
+      - "next.config.*"
+      - "scripts/deploy-live.sh"
       - ".github/workflows/deploy-live.yml"
   push:
     branches:
@@ -15,6 +21,7 @@ on:
       - "package.json"
       - "package-lock.json"
       - "next.config.*"
+      - "scripts/deploy-live.sh"
       - ".github/workflows/deploy-live.yml"
   workflow_dispatch:
 
@@ -25,203 +32,70 @@ env:
   SERVER_HOST: 87.99.155.241
   SERVER_USER: ${{ secrets.SERVER_USER || 'root' }}
   SERVER_PORT: ${{ secrets.SERVER_PORT || '22' }}
-  KEY_SSH_PRIVATE: ${{ secrets.SSH_PRIVATE_KEY }}
-  KEY_HETZNER_PRIVATE: ${{ secrets.HETZNER_SSH_PRIVATE_KEY }}
-  KEY_SERVER_PRIVATE: ${{ secrets.SERVER_SSH_KEY }}
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
 jobs:
-  preflight:
-    name: Verify server access
+  validate:
+    name: Validate Next.js production build
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
+
     steps:
-      - name: Configure SSH
-        shell: bash
-        run: |
-          set -euo pipefail
-          install -m 700 -d ~/.ssh
-          python3 - <<'PY'
-          import base64
-          import os
-          from pathlib import Path
+      - name: Check out repository
+        uses: actions/checkout@v4
 
-          candidates = [
-              ("SSH_PRIVATE_KEY", os.environ.get("KEY_SSH_PRIVATE", "")),
-              ("HETZNER_SSH_PRIVATE_KEY", os.environ.get("KEY_HETZNER_PRIVATE", "")),
-              ("SERVER_SSH_KEY", os.environ.get("KEY_SERVER_PRIVATE", "")),
-          ]
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
 
-          def normalize(value: str) -> str:
-              raw = value.replace("\r", "").replace("\\n", "\n").strip()
-              if "PRIVATE KEY-----" in raw:
-                  return raw
-              try:
-                  decoded = base64.b64decode(raw).decode("utf-8").replace("\r", "").strip()
-              except Exception:
-                  return ""
-              return decoded if "PRIVATE KEY-----" in decoded else ""
+      - name: Install locked dependencies
+        run: npm ci
 
-          chosen_name = ""
-          chosen_key = ""
-          configured = []
-          for name, value in candidates:
-              if value:
-                  configured.append(name)
-              normalized = normalize(value)
-              if normalized and not chosen_key:
-                  chosen_name = name
-                  chosen_key = normalized
-
-          if not chosen_key:
-              present = ", ".join(configured) if configured else "none"
-              raise SystemExit(
-                  f"No valid OpenSSH private key was found. Configured secret names: {present}. "
-                  "Paste the complete private key file contents into one of the supported secrets."
-              )
-
-          Path.home().joinpath(".ssh/deploy_key").write_text(chosen_key.rstrip() + "\n")
-          print(f"Using validated key from {chosen_name}.")
-          PY
-          chmod 600 ~/.ssh/deploy_key
-          ssh-keygen -y -f ~/.ssh/deploy_key >/dev/null
-          ssh-keyscan -p "$SERVER_PORT" -H "$SERVER_HOST" >> ~/.ssh/known_hosts
-
-      - name: Verify the live application directory
-        shell: bash
-        run: |
-          ssh -i ~/.ssh/deploy_key -p "$SERVER_PORT" -o BatchMode=yes -o ConnectTimeout=12 "$SERVER_USER@$SERVER_HOST" \
-            'test -d /opt/velo && echo "Server access confirmed: /opt/velo exists."'
+      - name: Build Next.js application
+        run: npm run build
 
   deploy:
-    name: Build and deploy to Hetzner
+    name: Deploy territory-lock application to Hetzner
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     concurrency:
       group: velocityre-production
       cancel-in-progress: false
+
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
       - name: Configure SSH
         shell: bash
         run: |
           set -euo pipefail
           install -m 700 -d ~/.ssh
-          python3 - <<'PY'
-          import base64
-          import os
-          from pathlib import Path
-
-          candidates = [
-              ("SSH_PRIVATE_KEY", os.environ.get("KEY_SSH_PRIVATE", "")),
-              ("HETZNER_SSH_PRIVATE_KEY", os.environ.get("KEY_HETZNER_PRIVATE", "")),
-              ("SERVER_SSH_KEY", os.environ.get("KEY_SERVER_PRIVATE", "")),
-          ]
-
-          def normalize(value: str) -> str:
-              raw = value.replace("\r", "").replace("\\n", "\n").strip()
-              if "PRIVATE KEY-----" in raw:
-                  return raw
-              try:
-                  decoded = base64.b64decode(raw).decode("utf-8").replace("\r", "").strip()
-              except Exception:
-                  return ""
-              return decoded if "PRIVATE KEY-----" in decoded else ""
-
-          chosen_name = ""
-          chosen_key = ""
-          configured = []
-          for name, value in candidates:
-              if value:
-                  configured.append(name)
-              normalized = normalize(value)
-              if normalized and not chosen_key:
-                  chosen_name = name
-                  chosen_key = normalized
-
-          if not chosen_key:
-              present = ", ".join(configured) if configured else "none"
-              raise SystemExit(
-                  f"No valid OpenSSH private key was found. Configured secret names: {present}. "
-                  "Paste the complete private key file contents into one of the supported secrets."
-              )
-
-          Path.home().joinpath(".ssh/deploy_key").write_text(chosen_key.rstrip() + "\n")
-          print(f"Using validated key from {chosen_name}.")
-          PY
+          printf '%s\n' "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keygen -y -f ~/.ssh/deploy_key >/dev/null
           ssh-keyscan -p "$SERVER_PORT" -H "$SERVER_HOST" >> ~/.ssh/known_hosts
 
-      - name: Pull, build, and restart VelocityRE
+      - name: Pull main, rebuild territory-lock-app, and verify locally
+        shell: bash
+        run: ssh -i ~/.ssh/deploy_key -p "$SERVER_PORT" -o BatchMode=yes -o ConnectTimeout=12 "$SERVER_USER@$SERVER_HOST" 'bash -s' < scripts/deploy-live.sh
+
+      - name: Verify redesigned page publicly
         shell: bash
         run: |
-          ssh -i ~/.ssh/deploy_key -p "$SERVER_PORT" -o BatchMode=yes -o ConnectTimeout=12 "$SERVER_USER@$SERVER_HOST" 'bash -se' <<'REMOTE'
           set -euo pipefail
-
-          cd /opt/velo
-          git fetch --prune origin main
-          git reset --hard origin/main
-          npm ci
-          npm run build
-
-          restart_with_systemd() {
-            for service in velo velocityre properties; do
-              if systemctl list-unit-files "${service}.service" --no-legend 2>/dev/null | grep -q "${service}.service"; then
-                if [ "$(id -u)" -eq 0 ]; then
-                  systemctl restart "${service}.service"
-                  systemctl is-active --quiet "${service}.service"
-                else
-                  sudo systemctl restart "${service}.service"
-                  sudo systemctl is-active --quiet "${service}.service"
-                fi
-                echo "Restarted ${service}.service"
-                return 0
-              fi
-            done
-            return 1
-          }
-
-          restart_with_pm2() {
-            command -v pm2 >/dev/null 2>&1 || return 1
-            if pm2 describe velo >/dev/null 2>&1; then
-              pm2 restart velo --update-env
-            elif pm2 describe velocityre >/dev/null 2>&1; then
-              pm2 restart velocityre --update-env
-            else
-              return 1
-            fi
-            pm2 save
-            echo "Restarted the PM2 application"
-          }
-
-          restart_with_docker() {
-            command -v docker >/dev/null 2>&1 || return 1
-            if [ -f docker-compose.yml ] || [ -f compose.yml ] || [ -f compose.yaml ]; then
-              docker compose up -d --build
-              echo "Rebuilt the Docker Compose application"
-              return 0
-            fi
-            return 1
-          }
-
-          restart_with_systemd || restart_with_pm2 || restart_with_docker || {
-            echo "No recognized VelocityRE systemd service, PM2 process, or Docker Compose deployment was found."
-            exit 1
-          }
-          REMOTE
-
-      - name: Verify live page
-        shell: bash
-        run: |
-          for attempt in {1..12}; do
-            html="$(curl --fail --silent --show-error --location --max-time 15 https://properties.leadsbystorm.com/ || true)"
-            if printf '%s' "$html" | grep -q 'One Listing Guaranteed'; then
-              echo "Live VelocityRE page is serving the redesigned funnel."
+          for attempt in {1..18}; do
+            url="https://properties.leadsbystorm.com/?deployment_check=${GITHUB_SHA}-$(date +%s)-${attempt}"
+            html="$(curl --fail --silent --show-error --location --max-time 20 -H 'Cache-Control: no-cache' -H 'Pragma: no-cache' "$url")"
+            if printf '%s' "$html" | grep -q 'Agent-Driven Program'; then
+              echo 'Public deployment verification passed.'
               exit 0
             fi
             sleep 5
           done
-
-          echo "::error::Deployment completed, but the redesigned headline was not found on the live page."
+          echo '::error::The public domain did not return the redesigned offer.'
           exit 1
