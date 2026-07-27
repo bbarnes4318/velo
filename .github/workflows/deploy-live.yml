@@ -25,7 +25,9 @@ env:
   SERVER_HOST: 87.99.155.241
   SERVER_USER: ${{ secrets.SERVER_USER || 'root' }}
   SERVER_PORT: ${{ secrets.SERVER_PORT || '22' }}
-  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY || secrets.HETZNER_SSH_PRIVATE_KEY || secrets.SERVER_SSH_KEY }}
+  KEY_SSH_PRIVATE: ${{ secrets.SSH_PRIVATE_KEY }}
+  KEY_HETZNER_PRIVATE: ${{ secrets.HETZNER_SSH_PRIVATE_KEY }}
+  KEY_SERVER_PRIVATE: ${{ secrets.SERVER_SSH_KEY }}
 
 jobs:
   preflight:
@@ -34,14 +36,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Require an existing SSH key secret
-        shell: bash
-        run: |
-          if [ -z "$SSH_PRIVATE_KEY" ]; then
-            echo "::error::No SSH deployment key was found. Configure SSH_PRIVATE_KEY, HETZNER_SSH_PRIVATE_KEY, or SERVER_SSH_KEY in repository Actions secrets."
-            exit 1
-          fi
-
       - name: Configure SSH
         shell: bash
         run: |
@@ -52,29 +46,42 @@ jobs:
           import os
           from pathlib import Path
 
-          raw = os.environ["SSH_PRIVATE_KEY"].replace("\r", "").replace("\\n", "\n").strip()
-          if "PRIVATE KEY-----" not in raw:
+          candidates = [
+              ("SSH_PRIVATE_KEY", os.environ.get("KEY_SSH_PRIVATE", "")),
+              ("HETZNER_SSH_PRIVATE_KEY", os.environ.get("KEY_HETZNER_PRIVATE", "")),
+              ("SERVER_SSH_KEY", os.environ.get("KEY_SERVER_PRIVATE", "")),
+          ]
+
+          def normalize(value: str) -> str:
+              raw = value.replace("\r", "").replace("\\n", "\n").strip()
+              if "PRIVATE KEY-----" in raw:
+                  return raw
               try:
                   decoded = base64.b64decode(raw).decode("utf-8").replace("\r", "").strip()
               except Exception:
-                  decoded = ""
-              if "PRIVATE KEY-----" in decoded:
-                  raw = decoded
-              else:
-                  lower = raw.lower()
-                  if raw.startswith(("ssh-rsa ", "ssh-ed25519 ", "ecdsa-sha2-")):
-                      reason = "The secret contains a PUBLIC key. Paste the matching PRIVATE key file instead."
-                  elif raw.startswith("PuTTY-User-Key-File-"):
-                      reason = "The secret contains a PuTTY .ppk key. Export it as an OpenSSH private key first."
-                  elif len(raw) < 300 and ("\\" in raw or raw.startswith(("/", "~"))):
-                      reason = "The secret appears to contain a FILE PATH. Open that file and paste its complete contents instead."
-                  elif "begin" in lower or "end" in lower:
-                      reason = "The private key appears truncated. Paste every line from BEGIN through END."
-                  else:
-                      reason = "The secret is not an OpenSSH private key. Paste the complete private key file contents."
-                  raise SystemExit(reason)
+                  return ""
+              return decoded if "PRIVATE KEY-----" in decoded else ""
 
-          Path.home().joinpath(".ssh/deploy_key").write_text(raw.rstrip() + "\n")
+          chosen_name = ""
+          chosen_key = ""
+          configured = []
+          for name, value in candidates:
+              if value:
+                  configured.append(name)
+              normalized = normalize(value)
+              if normalized and not chosen_key:
+                  chosen_name = name
+                  chosen_key = normalized
+
+          if not chosen_key:
+              present = ", ".join(configured) if configured else "none"
+              raise SystemExit(
+                  f"No valid OpenSSH private key was found. Configured secret names: {present}. "
+                  "Paste the complete private key file contents into one of the supported secrets."
+              )
+
+          Path.home().joinpath(".ssh/deploy_key").write_text(chosen_key.rstrip() + "\n")
+          print(f"Using validated key from {chosen_name}.")
           PY
           chmod 600 ~/.ssh/deploy_key
           ssh-keygen -y -f ~/.ssh/deploy_key >/dev/null
@@ -95,14 +102,6 @@ jobs:
       group: velocityre-production
       cancel-in-progress: false
     steps:
-      - name: Require an existing SSH key secret
-        shell: bash
-        run: |
-          if [ -z "$SSH_PRIVATE_KEY" ]; then
-            echo "::error::No SSH deployment key was found. Configure SSH_PRIVATE_KEY, HETZNER_SSH_PRIVATE_KEY, or SERVER_SSH_KEY in repository Actions secrets."
-            exit 1
-          fi
-
       - name: Configure SSH
         shell: bash
         run: |
@@ -113,29 +112,42 @@ jobs:
           import os
           from pathlib import Path
 
-          raw = os.environ["SSH_PRIVATE_KEY"].replace("\r", "").replace("\\n", "\n").strip()
-          if "PRIVATE KEY-----" not in raw:
+          candidates = [
+              ("SSH_PRIVATE_KEY", os.environ.get("KEY_SSH_PRIVATE", "")),
+              ("HETZNER_SSH_PRIVATE_KEY", os.environ.get("KEY_HETZNER_PRIVATE", "")),
+              ("SERVER_SSH_KEY", os.environ.get("KEY_SERVER_PRIVATE", "")),
+          ]
+
+          def normalize(value: str) -> str:
+              raw = value.replace("\r", "").replace("\\n", "\n").strip()
+              if "PRIVATE KEY-----" in raw:
+                  return raw
               try:
                   decoded = base64.b64decode(raw).decode("utf-8").replace("\r", "").strip()
               except Exception:
-                  decoded = ""
-              if "PRIVATE KEY-----" in decoded:
-                  raw = decoded
-              else:
-                  lower = raw.lower()
-                  if raw.startswith(("ssh-rsa ", "ssh-ed25519 ", "ecdsa-sha2-")):
-                      reason = "The secret contains a PUBLIC key. Paste the matching PRIVATE key file instead."
-                  elif raw.startswith("PuTTY-User-Key-File-"):
-                      reason = "The secret contains a PuTTY .ppk key. Export it as an OpenSSH private key first."
-                  elif len(raw) < 300 and ("\\" in raw or raw.startswith(("/", "~"))):
-                      reason = "The secret appears to contain a FILE PATH. Open that file and paste its complete contents instead."
-                  elif "begin" in lower or "end" in lower:
-                      reason = "The private key appears truncated. Paste every line from BEGIN through END."
-                  else:
-                      reason = "The secret is not an OpenSSH private key. Paste the complete private key file contents."
-                  raise SystemExit(reason)
+                  return ""
+              return decoded if "PRIVATE KEY-----" in decoded else ""
 
-          Path.home().joinpath(".ssh/deploy_key").write_text(raw.rstrip() + "\n")
+          chosen_name = ""
+          chosen_key = ""
+          configured = []
+          for name, value in candidates:
+              if value:
+                  configured.append(name)
+              normalized = normalize(value)
+              if normalized and not chosen_key:
+                  chosen_name = name
+                  chosen_key = normalized
+
+          if not chosen_key:
+              present = ", ".join(configured) if configured else "none"
+              raise SystemExit(
+                  f"No valid OpenSSH private key was found. Configured secret names: {present}. "
+                  "Paste the complete private key file contents into one of the supported secrets."
+              )
+
+          Path.home().joinpath(".ssh/deploy_key").write_text(chosen_key.rstrip() + "\n")
+          print(f"Using validated key from {chosen_name}.")
           PY
           chmod 600 ~/.ssh/deploy_key
           ssh-keygen -y -f ~/.ssh/deploy_key >/dev/null
