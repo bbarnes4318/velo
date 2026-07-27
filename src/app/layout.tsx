@@ -1,12 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
-import NativeCallBridge from "./components/NativeCallBridge";
-import InvestmentCalculator from "./components/InvestmentCalculator";
 import "./globals.css";
-import "./process-section.css";
-import "./outcome-section.css";
-import "./results-section.css";
-import "./modern-spacing.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
@@ -17,20 +11,19 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
-  title: "VelocityRE.pro | Predictive Seller Leads With a Closing Guarantee",
+  title: "VelocityRE.pro | 50 Seller Opportunities and One Listing Guaranteed",
   description:
-    "Reach likely home sellers before they list. Get 50 contact-ready seller opportunities each month, protected territory, and a closing guarantee under program terms.",
+    "Receive 50 contact-ready seller opportunities each month, work a protected local market, and get one listing guaranteed under written program terms.",
   keywords: [
-    "predictive seller leads",
+    "predictive seller opportunities",
     "real estate seller leads",
-    "likely to list homeowners",
-    "AI real estate prospecting",
+    "listing agent prospecting",
     "pre-MLS seller opportunities",
-    "exclusive real estate territory",
+    "protected real estate territory",
   ],
   authors: [{ name: "VelocityRE.pro" }],
 };
@@ -48,9 +41,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${plusJakartaSans.variable} ${inter.variable}`}>
-      <body style={{ margin: 0, padding: 0 }}>
-        <NativeCallBridge />
-        <InvestmentCalculator />
+      <body style={{ margin: 0, padding: 0, fontFamily: "var(--font-plus-jakarta), Arial, sans-serif" }}>
         {children}
       </body>
     </html>
