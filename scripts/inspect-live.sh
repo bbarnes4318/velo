@@ -1,60 +1,37 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-container=territory-lock-app
+cd /opt/territory-lock
 
-echo '=== CONTAINER SUMMARY ==='
-docker inspect "$container" | python3 -c '
-import json,sys
-obj=json.load(sys.stdin)[0]
-config=obj.get("Config",{})
-host=obj.get("HostConfig",{})
-labels=config.get("Labels",{}) or {}
-print("name=" + obj.get("Name","").lstrip("/"))
-print("image=" + str(config.get("Image","")))
-print("image_id=" + str(obj.get("Image","")))
-print("created=" + str(obj.get("Created","")))
-print("status=" + str(obj.get("State",{}).get("Status","")))
-print("working_dir=" + str(config.get("WorkingDir","")))
-print("entrypoint=" + repr(config.get("Entrypoint")))
-print("cmd=" + repr(config.get("Cmd")))
-print("restart_policy=" + str(host.get("RestartPolicy",{}).get("Name","")))
-for key in sorted(labels):
-    if key.startswith("com.docker.compose") or "coolify" in key.lower() or "traefik" in key.lower():
-        print("label.%s=%s" % (key, labels[key]))
-print("mounts:")
-for m in obj.get("Mounts",[]):
-    print("  %s:%s type=%s rw=%s" % (m.get("Source",""), m.get("Destination",""), m.get("Type",""), m.get("RW","")))
-print("networks:")
-for name,data in (obj.get("NetworkSettings",{}).get("Networks",{}) or {}).items():
-    print("  %s ip=%s" % (name, data.get("IPAddress","")))
-'
+echo '=== PROJECT DIRECTORY ==='
+printf 'directory=%s\n' "$(pwd)"
+ls -la | sed -n '1,80p'
 
-echo '=== IMAGE SUMMARY ==='
-docker image inspect territory-lock-app | python3 -c '
-import json,sys
-obj=json.load(sys.stdin)[0]
-print("id=" + obj.get("Id",""))
-print("created=" + obj.get("Created",""))
-print("repo_tags=" + repr(obj.get("RepoTags",[])))
-print("working_dir=" + str(obj.get("Config",{}).get("WorkingDir","")))
-print("cmd=" + repr(obj.get("Config",{}).get("Cmd")))
-'
+echo '=== GIT SOURCE ==='
+if [ -d .git ]; then
+  printf 'commit=%s\n' "$(git rev-parse --short HEAD)"
+  printf 'branch=%s\n' "$(git branch --show-current || true)"
+  remote="$(git remote get-url origin 2>/dev/null || true)"
+  remote="$(printf '%s' "$remote" | sed -E 's#https://[^/@]+@github\.com/#https://github.com/#')"
+  printf 'origin=%s\n' "$remote"
+else
+  echo 'git_repository=no'
+fi
 
-echo '=== COMPOSE AND ROUTING FILES ==='
-for root in /opt /data/coolify; do
-  [ -d "$root" ] || continue
-  find "$root" -maxdepth 6 -type f \( -name 'docker-compose.yml' -o -name 'docker-compose.yaml' -o -name 'compose.yml' -o -name 'compose.yaml' \) -print0 2>/dev/null |
-    while IFS= read -r -d '' file; do
-      if grep -qE 'territory-lock-app|properties\.leadsbystorm\.com' "$file" 2>/dev/null; then
-        echo "$file"
-      fi
-    done
-done
+echo '=== APPLICATION MARKERS ==='
+[ -f package.json ] && python3 -c 'import json; p=json.load(open("package.json")); print("package="+str(p.get("name",""))); print("next="+str((p.get("dependencies",{}) or {}).get("next","")))'
+printf 'old_headline='
+grep -R -F 'Reach Tomorrow' src app 2>/dev/null | head -n 1 || echo not-found
+printf 'new_headline='
+grep -R -F '50 Seller Opportunities' src app 2>/dev/null | head -n 1 || echo not-found
 
-echo '=== SOURCE DIRECTORIES ==='
-for dir in /opt/velo /opt/territory-lock /opt/territory-lock-app /data/coolify/applications; do
-  if [ -e "$dir" ]; then
-    ls -ld "$dir"
-  fi
+echo '=== COMPOSE FILE ==='
+sed -n '1,220p' docker-compose.yml
+
+echo '=== DOCKERFILE ==='
+if [ -f Dockerfile ]; then sed -n '1,220p' Dockerfile; else echo 'Dockerfile=missing'; fi
+
+echo '=== BUILD CONTEXT FILES ==='
+for file in package-lock.json next.config.js next.config.mjs next.config.ts; do
+  [ -f "$file" ] && echo "$file=present"
 done
