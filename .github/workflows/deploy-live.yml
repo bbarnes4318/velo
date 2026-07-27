@@ -1,4 +1,4 @@
-name: Diagnose and Deploy Live VelocityRE
+name: Inspect Live VelocityRE Routing
 
 on:
   pull_request:
@@ -15,18 +15,13 @@ env:
   SERVER_HOST: 87.99.155.241
   SERVER_USER: ${{ secrets.SERVER_USER || 'root' }}
   SERVER_PORT: ${{ secrets.SERVER_PORT || '22' }}
-  KEY_SSH_PRIVATE: ${{ secrets.SSH_PRIVATE_KEY }}
-  KEY_HETZNER_PRIVATE: ${{ secrets.HETZNER_SSH_PRIVATE_KEY }}
-  KEY_SERVER_PRIVATE: ${{ secrets.SERVER_SSH_KEY }}
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
 jobs:
-  deploy:
-    name: Deploy main and verify live service
+  inspect:
+    name: Identify the service serving properties.leadsbystorm.com
     runs-on: ubuntu-latest
-    timeout-minutes: 25
-    concurrency:
-      group: velocityre-production
-      cancel-in-progress: false
+    timeout-minutes: 8
 
     steps:
       - name: Configure SSH
@@ -34,124 +29,72 @@ jobs:
         run: |
           set -euo pipefail
           install -m 700 -d ~/.ssh
-          python3 - <<'PY'
-          import base64
-          import os
-          from pathlib import Path
-
-          candidates = [
-              os.environ.get("KEY_SSH_PRIVATE", ""),
-              os.environ.get("KEY_HETZNER_PRIVATE", ""),
-              os.environ.get("KEY_SERVER_PRIVATE", ""),
-          ]
-
-          def normalize(value: str) -> str:
-              raw = value.replace("\r", "").replace("\\n", "\n").strip()
-              if "PRIVATE KEY-----" in raw:
-                  return raw
-              try:
-                  decoded = base64.b64decode(raw).decode("utf-8").replace("\r", "").strip()
-              except Exception:
-                  return ""
-              return decoded if "PRIVATE KEY-----" in decoded else ""
-
-          key = next((normalize(value) for value in candidates if normalize(value)), "")
-          if not key:
-              raise SystemExit("No valid OpenSSH private key is configured.")
-
-          Path.home().joinpath(".ssh/deploy_key").write_text(key.rstrip() + "\n")
-          PY
+          printf '%s\n' "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keygen -y -f ~/.ssh/deploy_key >/dev/null
           ssh-keyscan -p "$SERVER_PORT" -H "$SERVER_HOST" >> ~/.ssh/known_hosts
 
-      - name: Pull, build, identify service, and restart
+      - name: Inspect application processes and Traefik routing
         shell: bash
         run: |
           ssh -i ~/.ssh/deploy_key -p "$SERVER_PORT" -o BatchMode=yes -o ConnectTimeout=12 "$SERVER_USER@$SERVER_HOST" 'bash -se' <<'REMOTE'
           set -euo pipefail
 
+          echo '=== DEPLOYED SOURCE ==='
           cd /opt/velo
-          echo "Application directory confirmed: $(pwd)"
-          echo "Commit before deployment: $(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
+          printf 'directory=%s\n' "$(pwd)"
+          printf 'commit=%s\n' "$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
+          printf 'headline_in_source='
+          grep -F '50 Seller Opportunities. One Listing Guaranteed.' src/app/page.tsx >/dev/null && echo yes || echo no
 
-          git fetch --prune origin main
-          git reset --hard origin/main
-          echo "Commit after deployment: $(git rev-parse --short HEAD)"
-
-          echo "Node: $(node --version)"
-          echo "npm: $(npm --version)"
-          npm ci
-          npm run build
-          echo "Production build completed on the server."
-
-          restart_with_systemd() {
-            for service in velo velocityre properties; do
-              if systemctl list-unit-files "${service}.service" --no-legend 2>/dev/null | grep -q "${service}.service"; then
-                systemctl restart "${service}.service"
-                systemctl is-active --quiet "${service}.service"
-                echo "Restarted systemd service: ${service}.service"
-                return 0
-              fi
-            done
-            return 1
-          }
-
-          restart_with_pm2() {
-            command -v pm2 >/dev/null 2>&1 || return 1
-            for process in velo velocityre properties; do
-              if pm2 describe "$process" >/dev/null 2>&1; then
-                pm2 restart "$process" --update-env
-                pm2 save
-                echo "Restarted PM2 process: $process"
-                return 0
-              fi
-            done
-            return 1
-          }
-
-          restart_with_compose() {
-            command -v docker >/dev/null 2>&1 || return 1
-            if [ -f docker-compose.yml ] || [ -f compose.yml ] || [ -f compose.yaml ]; then
-              docker compose up -d --build
-              echo "Rebuilt Docker Compose application."
-              return 0
+          echo '=== SYSTEMD ==='
+          for service in velo velocityre properties; do
+            if systemctl list-unit-files "${service}.service" --no-legend 2>/dev/null | grep -q "${service}.service"; then
+              printf '%s active=%s\n' "${service}.service" "$(systemctl is-active "${service}.service" 2>/dev/null || true)"
+              systemctl show "${service}.service" -p WorkingDirectory -p ExecStart --no-pager 2>/dev/null || true
             fi
-            return 1
-          }
-
-          restart_matching_container() {
-            command -v docker >/dev/null 2>&1 || return 1
-            container="$(docker ps --format '{{.Names}}' | grep -Ei 'velo|velocityre|properties' | head -n 1 || true)"
-            [ -n "$container" ] || return 1
-            docker restart "$container"
-            echo "Restarted matching Docker container: $container"
-            return 0
-          }
-
-          restart_with_systemd || restart_with_pm2 || restart_with_compose || restart_matching_container || {
-            echo "No recognized live service was found."
-            echo "Matching systemd units:"
-            systemctl list-unit-files --type=service --no-legend 2>/dev/null | grep -Ei 'velo|velocity|propert|next' || true
-            echo "PM2 process names:"
-            if command -v pm2 >/dev/null 2>&1; then pm2 jlist | python3 -c 'import json,sys; print("\n".join(x.get("name", "") for x in json.load(sys.stdin)))' || true; fi
-            echo "Docker container names:"
-            if command -v docker >/dev/null 2>&1; then docker ps --format '{{.Names}}' || true; fi
-            exit 1
-          }
-          REMOTE
-
-      - name: Verify redesigned page is live
-        shell: bash
-        run: |
-          for attempt in {1..18}; do
-            html="$(curl --fail --silent --show-error --location --max-time 15 https://properties.leadsbystorm.com/ || true)"
-            if printf '%s' "$html" | grep -q '50 Seller Opportunities. One Listing Guaranteed.'; then
-              echo "The redesigned VelocityRE funnel is live."
-              exit 0
-            fi
-            sleep 5
           done
 
-          echo "::error::The server deployment ran, but the redesigned headline is not live."
-          exit 1
+          echo '=== PM2 ==='
+          if command -v pm2 >/dev/null 2>&1; then
+            pm2 jlist | python3 -c 'import json,sys; data=json.load(sys.stdin); [print("name=%s status=%s cwd=%s script=%s" % (p.get("name",""), p.get("pm2_env",{}).get("status",""), p.get("pm2_env",{}).get("pm_cwd",""), p.get("pm2_env",{}).get("pm_exec_path",""))) for p in data]'
+          else
+            echo 'pm2=not-installed'
+          fi
+
+          echo '=== DOCKER CONTAINERS ==='
+          if command -v docker >/dev/null 2>&1; then
+            docker ps --format 'name={{.Names}} image={{.Image}} ports={{.Ports}}'
+            echo '=== CONTAINERS CLAIMING DOMAIN ==='
+            for id in $(docker ps -q); do
+              docker inspect "$id" | python3 -c '
+          import json,sys
+          obj=json.load(sys.stdin)[0]
+          labels=obj.get("Config",{}).get("Labels",{}) or {}
+          matches={k:v for k,v in labels.items() if "properties.leadsbystorm.com" in str(v)}
+          if matches:
+              print("name=" + obj.get("Name","").lstrip("/"))
+              for k,v in sorted(matches.items()): print(k + "=" + str(v))
+          '
+            done
+          else
+            echo 'docker=not-installed'
+          fi
+
+          echo '=== LISTENERS ==='
+          ss -ltnp 2>/dev/null | grep -E ':(80|443|3000|3001|8080)\b' || true
+
+          echo '=== LOCAL HOST HEADER CHECK ==='
+          for port in 80 3000 3001 8080; do
+            body="$(curl -sS --max-time 5 -H 'Host: properties.leadsbystorm.com' "http://127.0.0.1:${port}/" 2>/dev/null || true)"
+            if [ -n "$body" ]; then
+              if printf '%s' "$body" | grep -q '50 Seller Opportunities. One Listing Guaranteed.'; then
+                echo "port=${port} page=new"
+              elif printf '%s' "$body" | grep -q 'Reach Tomorrow'; then
+                echo "port=${port} page=old"
+              else
+                echo "port=${port} page=other"
+              fi
+            fi
+          done
+          REMOTE
