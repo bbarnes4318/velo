@@ -1,0 +1,42 @@
+name: Validate Live Realtor Page
+
+on:
+  push:
+    branches:
+      - agent/live-realtor-funnel
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "src/app/page.tsx"
+      - "src/app/page.module.css"
+      - "src/app/layout.tsx"
+      - "src/app/globals.css"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/validate-live-page.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Production build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Build Next.js application
+        run: npm run build
