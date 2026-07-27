@@ -45,9 +45,29 @@ jobs:
       - name: Configure SSH
         shell: bash
         run: |
+          set -euo pipefail
           install -m 700 -d ~/.ssh
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+
+          # Accept normal multiline keys, Windows CRLF keys, literal \n strings,
+          # and base64-encoded private keys.
+          printf '%s' "$SSH_PRIVATE_KEY" | tr -d '\r' | sed 's/\\n/\
+/g' > ~/.ssh/deploy_key
+
+          if ! grep -q -- '-----BEGIN .*PRIVATE KEY-----' ~/.ssh/deploy_key; then
+            if printf '%s' "$SSH_PRIVATE_KEY" | base64 --decode > ~/.ssh/deploy_key.decoded 2>/dev/null \
+              && grep -q -- '-----BEGIN .*PRIVATE KEY-----' ~/.ssh/deploy_key.decoded; then
+              mv ~/.ssh/deploy_key.decoded ~/.ssh/deploy_key
+              tr -d '\r' < ~/.ssh/deploy_key > ~/.ssh/deploy_key.normalized
+              mv ~/.ssh/deploy_key.normalized ~/.ssh/deploy_key
+            else
+              rm -f ~/.ssh/deploy_key.decoded
+              echo "::error::SSH_PRIVATE_KEY is not a valid private key. Paste the complete key, including BEGIN/END PRIVATE KEY lines."
+              exit 1
+            fi
+          fi
+
           chmod 600 ~/.ssh/deploy_key
+          ssh-keygen -y -f ~/.ssh/deploy_key >/dev/null
           ssh-keyscan -p "$SERVER_PORT" -H "$SERVER_HOST" >> ~/.ssh/known_hosts
 
       - name: Verify the live application directory
@@ -76,9 +96,27 @@ jobs:
       - name: Configure SSH
         shell: bash
         run: |
+          set -euo pipefail
           install -m 700 -d ~/.ssh
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+
+          printf '%s' "$SSH_PRIVATE_KEY" | tr -d '\r' | sed 's/\\n/\
+/g' > ~/.ssh/deploy_key
+
+          if ! grep -q -- '-----BEGIN .*PRIVATE KEY-----' ~/.ssh/deploy_key; then
+            if printf '%s' "$SSH_PRIVATE_KEY" | base64 --decode > ~/.ssh/deploy_key.decoded 2>/dev/null \
+              && grep -q -- '-----BEGIN .*PRIVATE KEY-----' ~/.ssh/deploy_key.decoded; then
+              mv ~/.ssh/deploy_key.decoded ~/.ssh/deploy_key
+              tr -d '\r' < ~/.ssh/deploy_key > ~/.ssh/deploy_key.normalized
+              mv ~/.ssh/deploy_key.normalized ~/.ssh/deploy_key
+            else
+              rm -f ~/.ssh/deploy_key.decoded
+              echo "::error::SSH_PRIVATE_KEY is not a valid private key. Paste the complete key, including BEGIN/END PRIVATE KEY lines."
+              exit 1
+            fi
+          fi
+
           chmod 600 ~/.ssh/deploy_key
+          ssh-keygen -y -f ~/.ssh/deploy_key >/dev/null
           ssh-keyscan -p "$SERVER_PORT" -H "$SERVER_HOST" >> ~/.ssh/known_hosts
 
       - name: Pull, build, and restart VelocityRE
@@ -138,3 +176,18 @@ jobs:
             exit 1
           }
           REMOTE
+
+      - name: Verify live page
+        shell: bash
+        run: |
+          for attempt in {1..12}; do
+            html="$(curl --fail --silent --show-error --location --max-time 15 https://properties.leadsbystorm.com/ || true)"
+            if printf '%s' "$html" | grep -q 'One Listing Guaranteed'; then
+              echo "Live VelocityRE page is serving the redesigned funnel."
+              exit 0
+            fi
+            sleep 5
+          done
+
+          echo "::error::Deployment completed, but the redesigned headline was not found on the live page."
+          exit 1
