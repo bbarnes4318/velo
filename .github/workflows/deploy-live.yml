@@ -52,15 +52,27 @@ jobs:
           import os
           from pathlib import Path
 
-          raw = os.environ["SSH_PRIVATE_KEY"].replace("\r", "").replace("\\n", "\n")
+          raw = os.environ["SSH_PRIVATE_KEY"].replace("\r", "").replace("\\n", "\n").strip()
           if "PRIVATE KEY-----" not in raw:
               try:
-                  decoded = base64.b64decode(raw).decode("utf-8").replace("\r", "")
+                  decoded = base64.b64decode(raw).decode("utf-8").replace("\r", "").strip()
               except Exception:
                   decoded = ""
-              if "PRIVATE KEY-----" not in decoded:
-                  raise SystemExit("SSH_PRIVATE_KEY is not a valid private key. Paste the complete key, including BEGIN/END PRIVATE KEY lines.")
-              raw = decoded
+              if "PRIVATE KEY-----" in decoded:
+                  raw = decoded
+              else:
+                  lower = raw.lower()
+                  if raw.startswith(("ssh-rsa ", "ssh-ed25519 ", "ecdsa-sha2-")):
+                      reason = "The secret contains a PUBLIC key. Paste the matching PRIVATE key file instead."
+                  elif raw.startswith("PuTTY-User-Key-File-"):
+                      reason = "The secret contains a PuTTY .ppk key. Export it as an OpenSSH private key first."
+                  elif len(raw) < 300 and ("\\" in raw or raw.startswith(("/", "~"))):
+                      reason = "The secret appears to contain a FILE PATH. Open that file and paste its complete contents instead."
+                  elif "begin" in lower or "end" in lower:
+                      reason = "The private key appears truncated. Paste every line from BEGIN through END."
+                  else:
+                      reason = "The secret is not an OpenSSH private key. Paste the complete private key file contents."
+                  raise SystemExit(reason)
 
           Path.home().joinpath(".ssh/deploy_key").write_text(raw.rstrip() + "\n")
           PY
@@ -101,15 +113,27 @@ jobs:
           import os
           from pathlib import Path
 
-          raw = os.environ["SSH_PRIVATE_KEY"].replace("\r", "").replace("\\n", "\n")
+          raw = os.environ["SSH_PRIVATE_KEY"].replace("\r", "").replace("\\n", "\n").strip()
           if "PRIVATE KEY-----" not in raw:
               try:
-                  decoded = base64.b64decode(raw).decode("utf-8").replace("\r", "")
+                  decoded = base64.b64decode(raw).decode("utf-8").replace("\r", "").strip()
               except Exception:
                   decoded = ""
-              if "PRIVATE KEY-----" not in decoded:
-                  raise SystemExit("SSH_PRIVATE_KEY is not a valid private key. Paste the complete key, including BEGIN/END PRIVATE KEY lines.")
-              raw = decoded
+              if "PRIVATE KEY-----" in decoded:
+                  raw = decoded
+              else:
+                  lower = raw.lower()
+                  if raw.startswith(("ssh-rsa ", "ssh-ed25519 ", "ecdsa-sha2-")):
+                      reason = "The secret contains a PUBLIC key. Paste the matching PRIVATE key file instead."
+                  elif raw.startswith("PuTTY-User-Key-File-"):
+                      reason = "The secret contains a PuTTY .ppk key. Export it as an OpenSSH private key first."
+                  elif len(raw) < 300 and ("\\" in raw or raw.startswith(("/", "~"))):
+                      reason = "The secret appears to contain a FILE PATH. Open that file and paste its complete contents instead."
+                  elif "begin" in lower or "end" in lower:
+                      reason = "The private key appears truncated. Paste every line from BEGIN through END."
+                  else:
+                      reason = "The secret is not an OpenSSH private key. Paste the complete private key file contents."
+                  raise SystemExit(reason)
 
           Path.home().joinpath(".ssh/deploy_key").write_text(raw.rstrip() + "\n")
           PY
