@@ -61,7 +61,7 @@ const plans: Plan[] = [
     id: 'concierge',
     label: 'The complete appointment system',
     title: 'Done-for-You',
-    description: 'We do the groundwork—property-specific outreach, qualification, follow-up, and appointment scheduling.',
+    description: 'Trained American representatives handle real homeowner conversations, qualification, follow-up, and appointment scheduling.',
     price: '$949',
     cadence: 'to start',
     detail: '+ $949 only when the first listing is secured',
@@ -107,6 +107,14 @@ const scenarios: Record<ScenarioId, {
 };
 
 const faqs = [
+  {
+    question: 'Do you use AI to call homeowners?',
+    answer: 'No. The Done-for-You outreach option is handled by real American representatives who are trained and experienced in homeowner conversations and listing-appointment conversion.',
+  },
+  {
+    question: 'Do I have to use the appointment-setting service?',
+    answer: 'No. Market Test Pilot and Agent-Driven give you the seller opportunities and property context so you can handle the outreach yourself. Appointment setting is available only when you choose Done-for-You.',
+  },
   {
     question: 'What is included in the $279 plan?',
     answer: 'Market Test Pilot includes 10 new seller opportunities each month, contact and property data, seller-signal summaries, mobile map access, and basic tracking. It does not include protected territory or the one-listing guarantee.',
@@ -200,32 +208,32 @@ export default function Home() {
       <section className={`${styles.hero} ${styles.screenSection}`}>
         <div className={styles.heroInner}>
           <div className={styles.heroCopy}>
-            <span className={styles.eyebrow}>Done-for-you off-market listing generation</span>
-            <h1>We find the homeowners. You walk into the listing conversation.</h1>
+            <span className={styles.eyebrow}>Seller opportunities with optional appointment setting</span>
+            <h1>Find more potential sellers. Choose who starts the conversation.</h1>
             <p>
-              We do the groundwork to identify high-potential off-market sellers, start property-specific conversations, qualify real interest, and put appointments in front of agents.
+              We identify high-potential off-market sellers and give you the property intelligence to reach them. Work every opportunity yourself—or choose Done-for-You and let trained American representatives qualify interest and schedule listing appointments.
             </p>
             <div className={styles.heroActions}>
               <button className={styles.primaryButton} onClick={() => scrollToId('plans')}>Choose how you want to start <ArrowIcon /></button>
               <button className={styles.textButton} onClick={() => scrollToId('how')}>See the system at work</button>
             </div>
             <div className={styles.heroProof}>
-              <div><strong>Specific</strong><span>Property-based outreach</span></div>
-              <div><strong>Qualified</strong><span>Seller intent uncovered</span></div>
-              <div><strong>Scheduled</strong><span>Agent appointments created</span></div>
+              <div><strong>Your choice</strong><span>Work opportunities yourself</span></div>
+              <div><strong>100% human</strong><span>American outreach team available</span></div>
+              <div><strong>Optional</strong><span>Qualified appointment setting</span></div>
             </div>
           </div>
 
           <div className={styles.previewCard} aria-label="Interactive illustration of the VelocityRE outreach process">
             <div className={styles.previewTop}>
               <div><span /><span /><span /></div>
-              <small>VelocityRE outreach engine</small>
-              <b>Interactive</b>
+              <small>Done-for-You outreach option</small>
+              <b>100% human</b>
             </div>
             <div className={styles.previewBody}>
               <div className={styles.previewHeading}>
-                <div><small>See how the conversation changes</small><strong>Property-specific outreach</strong></div>
-                <span>Built to sound human</span>
+                <div><small>How trained representatives adapt</small><strong>Real people. Real conversations.</strong></div>
+                <span>No AI calling</span>
               </div>
               <div className={styles.scenarioTabs} role="tablist" aria-label="Prospect scenarios">
                 {(Object.keys(scenarios) as ScenarioId[]).map((id) => (
@@ -247,22 +255,22 @@ export default function Home() {
                   <div><small>Why now</small><strong>{scenarios[activeScenario].signal}</strong></div>
                 </div>
                 <div className={styles.conversationBubble}>
-                  <span>Natural conversation pivot</span>
+                  <span>Representative’s conversation pivot</span>
                   <p>“{scenarios[activeScenario].message}”</p>
                 </div>
                 <div className={styles.pipelineFlow}>
                   <span>Property identified</span><ArrowIcon />
-                  <span>Conversation started</span><ArrowIcon />
+                  <span>American rep calls</span><ArrowIcon />
                   <strong>{scenarios[activeScenario].outcome}</strong>
                 </div>
               </div>
               <div className={styles.previewFooter}>
-                <span><CheckIcon /> No generic lead pitch</span>
-                <span><CheckIcon /> No shared aged-lead list</span>
-                <span><CheckIcon /> Clear appointment objective</span>
+                <span><CheckIcon /> Trained American representatives</span>
+                <span><CheckIcon /> Listing-appointment experience</span>
+                <span><CheckIcon /> Real person-to-person outreach</span>
               </div>
             </div>
-            <p>Illustrative workflow. Prospect response and appointment results vary.</p>
+            <p>Illustrative Done-for-You workflow. Representatives adapt each conversation naturally. Prospect responses and appointment results vary.</p>
           </div>
         </div>
       </section>
@@ -270,15 +278,15 @@ export default function Home() {
       <section id="how" className={`${styles.section} ${styles.screenSection}`}>
         <div className={styles.sectionInner}>
           <div className={styles.sectionIntro}>
-            <span className={styles.eyebrow}>The work agents should not have to do</span>
-            <h2>From property signal to seller conversation.</h2>
-            <p>This is not another spreadsheet of names. It is a focused system for finding the right properties, creating real conversations, and moving qualified homeowners toward an agent appointment.</p>
+            <span className={styles.eyebrow}>One system. Two ways to work it.</span>
+            <h2>Get the opportunities—or get the appointments.</h2>
+            <p>Use VelocityRE as your focused off-market prospecting source, or add our human outreach team when you want qualified listing appointments placed in front of you.</p>
           </div>
           <div className={styles.steps}>
             {[
               ['01', 'We identify the right properties', 'Property, ownership, listing-history, and market signals narrow the field.'],
-              ['02', 'We make the outreach relevant', 'The conversation starts with the actual property and the reason the timing may matter.'],
-              ['03', 'You meet interested homeowners', 'Choose the opportunities yourself—or let us qualify and schedule the appointment.'],
+              ['02', 'You choose how they are worked', 'Call the opportunities yourself or add our trained American outreach team.'],
+              ['03', 'You control the next step', 'Build the relationship from the first call—or meet homeowners after we qualify and schedule them.'],
             ].map(([number, title, body]) => (
               <article key={number}>
                 <span>{number}</span>
@@ -288,9 +296,9 @@ export default function Home() {
             ))}
           </div>
           <div className={styles.clarityBar}>
-            <span><CheckIcon /> Property-specific opening</span>
-            <span><CheckIcon /> Seller intent qualification</span>
-            <span><CheckIcon /> Clear appointment handoff</span>
+            <span><CheckIcon /> Agent-driven prospecting</span>
+            <span><CheckIcon /> Human Done-for-You outreach</span>
+            <span><CheckIcon /> Optional appointment setting</span>
           </div>
         </div>
       </section>
@@ -302,7 +310,7 @@ export default function Home() {
               <span className={styles.eyebrow}>Three ways to put the system to work</span>
               <h2>Test it. Work it. Or let us run it.</h2>
             </div>
-            <p>Start with a $279 monthly test pilot, take control of 50 monthly opportunities, or have our team handle the outreach and appointment setting for you.</p>
+            <p>Start with a $279 monthly test pilot, work 50 monthly opportunities yourself, or choose Done-for-You appointment setting with our trained American representatives.</p>
           </div>
 
           <div className={styles.planGrid}>
