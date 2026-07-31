@@ -109,7 +109,7 @@ const scenarios: Record<ScenarioId, {
 const faqs = [
   {
     question: 'What is included in the $279 plan?',
-    answer: 'Market Starter includes 10 new seller opportunities each month, contact and property data, seller-signal summaries, mobile map access, and basic tracking. It does not include protected territory or the one-listing guarantee.',
+    answer: 'Market Test Pilot includes 10 new seller opportunities each month, contact and property data, seller-signal summaries, mobile map access, and basic tracking. It does not include protected territory or the one-listing guarantee.',
   },
   {
     question: 'What exactly is guaranteed?',
@@ -121,7 +121,7 @@ const faqs = [
   },
   {
     question: 'Are opportunities shared with other agents?',
-    answer: 'Protected territory applies only to the Agent-Driven and Done-for-You programs, subject to final market availability. Market Starter does not include protected territory.',
+    answer: 'Protected territory applies only to the Agent-Driven and Done-for-You programs, subject to final market availability. Market Test Pilot does not include protected territory.',
   },
 ];
 
