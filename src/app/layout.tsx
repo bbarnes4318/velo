@@ -15,9 +15,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "VelocityRE.pro | Off-Market Seller Conversations for Realtors",
+  title: "VelocityRE.pro | Seller Opportunities & Optional Appointments",
   description:
-    "We identify off-market seller opportunities, create property-specific conversations, and help real estate agents generate listing appointments.",
+    "Work focused off-market seller opportunities yourself, or choose trained American representatives to qualify homeowners and schedule listing appointments.",
   keywords: [
     "predictive seller opportunities",
     "real estate seller leads",
