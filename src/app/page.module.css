@@ -428,6 +428,131 @@
   text-align: center;
 }
 
+
+.scenarioTabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 18px;
+  padding: 5px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.scenarioTabs button {
+  min-height: 35px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: #8fa4b1;
+  font-size: 9px;
+  font-weight: 750;
+  transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+.scenarioTabs button:hover {
+  color: #ffffff;
+}
+
+.scenarioTabs button.scenarioActive {
+  border-color: rgba(133, 218, 185, 0.3);
+  background: rgba(133, 218, 185, 0.12);
+  color: #b9f0db;
+}
+
+.scenarioPanel {
+  margin-top: 12px;
+  padding: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.scenarioContext {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.scenarioContext div {
+  min-width: 0;
+}
+
+.scenarioContext small,
+.scenarioContext strong {
+  display: block;
+}
+
+.scenarioContext small {
+  color: #78909e;
+  font-size: 8px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.scenarioContext strong {
+  overflow: hidden;
+  margin-top: 4px;
+  color: #f6fafc;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversationBubble {
+  position: relative;
+  margin-top: 14px;
+  padding: 13px 15px;
+  border-left: 3px solid #85dab9;
+  border-radius: 0 10px 10px 0;
+  background: rgba(133, 218, 185, 0.08);
+}
+
+.conversationBubble span {
+  color: #82ab9b;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.conversationBubble p {
+  margin: 6px 0 0;
+  color: #ecf7f2;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.48;
+}
+
+.pipelineFlow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 13px;
+  color: #8fa2ae;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.pipelineFlow svg {
+  width: 11px;
+  height: 11px;
+  flex: 0 0 auto;
+  color: #527080;
+}
+
+.pipelineFlow strong {
+  padding: 6px 8px;
+  border-radius: 999px;
+  background: #85dab9;
+  color: #102333;
+  font-size: 8px;
+  font-weight: 850;
+  white-space: nowrap;
+}
+
 .section {
   padding: 48px 22px;
   background: #fff;
@@ -1074,6 +1199,32 @@
   .previewFooter {
     display: grid;
     grid-template-columns: 1fr 1fr;
+  }
+
+  .scenarioTabs {
+    grid-template-columns: 1fr;
+  }
+
+  .scenarioTabs button {
+    min-height: 32px;
+    text-align: left;
+  }
+
+  .scenarioContext {
+    grid-template-columns: 1fr;
+  }
+
+  .pipelineFlow {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .pipelineFlow svg {
+    display: none;
+  }
+
+  .pipelineFlow strong {
+    align-self: flex-start;
   }
 
   .steps,

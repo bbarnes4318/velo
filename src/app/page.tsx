@@ -4,6 +4,7 @@ import { useMemo, useState, type FormEvent } from 'react';
 import styles from './page.module.css';
 
 type PlanId = 'starter' | 'agent' | 'concierge';
+type ScenarioId = 'expired' | 'corporate' | 'complex';
 
 type Plan = {
   id: PlanId;
@@ -23,26 +24,26 @@ const CALENDLY_URL = 'https://calendly.com/leadsbystorm-support/30min';
 const plans: Plan[] = [
   {
     id: 'starter',
-    label: 'Lowest-cost entry',
-    title: 'Market Starter',
-    description: 'A smaller monthly opportunity set for agents who want to test the system before moving into a guaranteed program.',
-    price: '$189',
+    label: 'Low-risk test pilot',
+    title: 'Market Test Pilot',
+    description: 'Prove the system in your market with a focused monthly opportunity set before moving into a full program.',
+    price: '$279',
     cadence: 'per month',
-    detail: 'Simple month-to-month entry plan',
+    detail: 'Month to month · built for a real-market test',
     features: [
       '10 new seller opportunities each month',
       'Homeowner and property contact information',
-      'Seller-signal summary for each opportunity',
+      'Why each property was identified',
       'Mobile map and basic pipeline tracking',
-      'Upgrade to a larger program at any time',
+      'Upgrade to a full program at any time',
     ],
-    guarantee: 'No listing guarantee or protected territory',
+    guarantee: 'Entry plan · no protected territory or listing guarantee',
   },
   {
     id: 'agent',
-    label: 'Best for active prospectors',
+    label: 'For agents who want control',
     title: 'Agent-Driven',
-    description: 'You receive the full monthly opportunity set, make the calls, and control every listing conversation.',
+    description: 'We identify and organize the opportunities. You make the calls, build the relationship, and own every conversation.',
     price: '$949',
     cadence: 'per month',
     detail: 'You call and set your own appointments',
@@ -58,9 +59,9 @@ const plans: Plan[] = [
   },
   {
     id: 'concierge',
-    label: 'We do the outreach',
+    label: 'The complete appointment system',
     title: 'Done-for-You',
-    description: 'Our team handles the initial outreach, follows up, and schedules qualified listing conversations for you.',
+    description: 'We do the groundwork—property-specific outreach, qualification, follow-up, and appointment scheduling.',
     price: '$949',
     cadence: 'to start',
     detail: '+ $949 only when the first listing is secured',
@@ -75,10 +76,40 @@ const plans: Plan[] = [
   },
 ];
 
+const scenarios: Record<ScenarioId, {
+  label: string;
+  title: string;
+  signal: string;
+  message: string;
+  outcome: string;
+}> = {
+  expired: {
+    label: 'Expired listing',
+    title: 'Owner-occupied property',
+    signal: 'Listing came off the market',
+    message: 'Are you taking a break, or would you still consider selling if the right option came along?',
+    outcome: 'Seller interest qualified',
+  },
+  corporate: {
+    label: 'Corporate-owned',
+    title: 'Portfolio property',
+    signal: 'Recent listing did not close',
+    message: 'Are you planning to hold the property, or are you open to an off-market alternative?',
+    outcome: 'Disposition intent identified',
+  },
+  complex: {
+    label: 'Complex timeline',
+    title: 'Time-sensitive property',
+    signal: 'Public records show potential roadblocks',
+    message: 'Would you be open to looking at alternatives that could help get this resolved?',
+    outcome: 'Agent visit requested',
+  },
+};
+
 const faqs = [
   {
-    question: 'What is included in the $189 plan?',
-    answer: 'Market Starter includes 10 new seller opportunities each month, contact and property data, seller-signal summaries, mobile map access, and basic tracking. It does not include protected territory or the one-listing guarantee.',
+    question: 'What is included in the $279 plan?',
+    answer: 'Market Test Pilot includes 10 new seller opportunities each month, contact and property data, seller-signal summaries, mobile map access, and basic tracking. It does not include protected territory or the one-listing guarantee.',
   },
   {
     question: 'What exactly is guaranteed?',
@@ -90,7 +121,7 @@ const faqs = [
   },
   {
     question: 'Are opportunities shared with other agents?',
-    answer: 'Protected territory applies only to the Agent-Driven and Done-for-You programs, subject to final market availability. Market Starter does not include protected territory.',
+    answer: 'Protected territory applies only to the Agent-Driven and Done-for-You programs, subject to final market availability. Market Test Pilot does not include protected territory.',
   },
 ];
 
@@ -116,6 +147,7 @@ function scrollToId(id: string) {
 
 export default function Home() {
   const [selectedPlan, setSelectedPlan] = useState<PlanId>('starter');
+  const [activeScenario, setActiveScenario] = useState<ScenarioId>('expired');
   const [zip, setZip] = useState('');
   const [zipError, setZipError] = useState('');
 
@@ -168,53 +200,69 @@ export default function Home() {
       <section className={`${styles.hero} ${styles.screenSection}`}>
         <div className={styles.heroInner}>
           <div className={styles.heroCopy}>
-            <span className={styles.eyebrow}>Seller opportunities for listing agents</span>
-            <h1>A cleaner path to your next listing.</h1>
+            <span className={styles.eyebrow}>Done-for-you off-market listing generation</span>
+            <h1>We find the homeowners. You walk into the listing conversation.</h1>
             <p>
-              Start with 10 seller opportunities for $189 per month—or choose a full program with 50 monthly opportunities, protected territory, and one listing guaranteed under written terms.
+              We do the groundwork to identify high-potential off-market sellers, start property-specific conversations, qualify real interest, and put appointments in front of agents.
             </p>
             <div className={styles.heroActions}>
-              <button className={styles.primaryButton} onClick={() => scrollToId('plans')}>Compare all three plans <ArrowIcon /></button>
-              <button className={styles.textButton} onClick={() => scrollToId('how')}>See how it works</button>
+              <button className={styles.primaryButton} onClick={() => scrollToId('plans')}>Choose how you want to start <ArrowIcon /></button>
+              <button className={styles.textButton} onClick={() => scrollToId('how')}>See the system at work</button>
             </div>
             <div className={styles.heroProof}>
-              <div><strong>$189</strong><span>lowest monthly plan</span></div>
-              <div><strong>10–50</strong><span>new opportunities monthly</span></div>
-              <div><strong>1 listing</strong><span>guaranteed on full plans*</span></div>
+              <div><strong>Specific</strong><span>Property-based outreach</span></div>
+              <div><strong>Qualified</strong><span>Seller intent uncovered</span></div>
+              <div><strong>Scheduled</strong><span>Agent appointments created</span></div>
             </div>
           </div>
 
-          <div className={styles.previewCard} aria-label="Illustrative VelocityRE seller opportunity dashboard">
+          <div className={styles.previewCard} aria-label="Interactive illustration of the VelocityRE outreach process">
             <div className={styles.previewTop}>
               <div><span /><span /><span /></div>
-              <small>Opportunity dashboard</small>
-              <b>Live</b>
+              <small>VelocityRE outreach engine</small>
+              <b>Interactive</b>
             </div>
             <div className={styles.previewBody}>
               <div className={styles.previewHeading}>
-                <div><small>Protected market</small><strong>Knoxville West</strong></div>
-                <span>50 active</span>
+                <div><small>See how the conversation changes</small><strong>Property-specific outreach</strong></div>
+                <span>Built to sound human</span>
               </div>
-              <div className={styles.opportunityList}>
-                {[
-                  ['91', 'Strong equity change', 'Owner occupied · 14 years'],
-                  ['87', 'Recent financial signal', 'Single family · 9 years'],
-                  ['82', 'Listing-history change', 'Owner occupied · 11 years'],
-                ].map(([score, signal, detail], index) => (
-                  <article key={score}>
-                    <b>{score}</b>
-                    <div><strong>{signal}</strong><span>{detail}</span></div>
-                    <button aria-label={`Open opportunity ${index + 1}`}>Open</button>
-                  </article>
+              <div className={styles.scenarioTabs} role="tablist" aria-label="Prospect scenarios">
+                {(Object.keys(scenarios) as ScenarioId[]).map((id) => (
+                  <button
+                    key={id}
+                    type="button"
+                    role="tab"
+                    aria-selected={activeScenario === id}
+                    className={activeScenario === id ? styles.scenarioActive : ''}
+                    onClick={() => setActiveScenario(id)}
+                  >
+                    {scenarios[id].label}
+                  </button>
                 ))}
               </div>
+              <div className={styles.scenarioPanel} role="tabpanel">
+                <div className={styles.scenarioContext}>
+                  <div><small>Property profile</small><strong>{scenarios[activeScenario].title}</strong></div>
+                  <div><small>Why now</small><strong>{scenarios[activeScenario].signal}</strong></div>
+                </div>
+                <div className={styles.conversationBubble}>
+                  <span>Natural conversation pivot</span>
+                  <p>“{scenarios[activeScenario].message}”</p>
+                </div>
+                <div className={styles.pipelineFlow}>
+                  <span>Property identified</span><ArrowIcon />
+                  <span>Conversation started</span><ArrowIcon />
+                  <strong>{scenarios[activeScenario].outcome}</strong>
+                </div>
+              </div>
               <div className={styles.previewFooter}>
-                <span><CheckIcon /> Contact data included</span>
-                <span><CheckIcon /> Tap-to-call</span>
-                <span><CheckIcon /> Follow-up tracking</span>
+                <span><CheckIcon /> No generic lead pitch</span>
+                <span><CheckIcon /> No shared aged-lead list</span>
+                <span><CheckIcon /> Clear appointment objective</span>
               </div>
             </div>
-            <p>Illustrative product view. Opportunity scores and results vary.</p>
+            <p>Illustrative workflow. Prospect response and appointment results vary.</p>
           </div>
         </div>
       </section>
@@ -222,15 +270,15 @@ export default function Home() {
       <section id="how" className={`${styles.section} ${styles.screenSection}`}>
         <div className={styles.sectionInner}>
           <div className={styles.sectionIntro}>
-            <span className={styles.eyebrow}>Simple by design</span>
-            <h2>Three steps. No bloated workflow.</h2>
-            <p>Choose the level of support you need, receive a focused opportunity set, and move each homeowner through a clear listing pipeline.</p>
+            <span className={styles.eyebrow}>The work agents should not have to do</span>
+            <h2>From property signal to seller conversation.</h2>
+            <p>This is not another spreadsheet of names. It is a focused system for finding the right properties, creating real conversations, and moving qualified homeowners toward an agent appointment.</p>
           </div>
           <div className={styles.steps}>
             {[
-              ['01', 'Choose your plan', 'Start at $189 monthly or select a full guaranteed program.'],
-              ['02', 'Receive focused opportunities', 'Get contact-ready homeowners with property and seller-signal context.'],
-              ['03', 'Create listing conversations', 'Call them yourself or let our team handle the initial outreach.'],
+              ['01', 'We identify the right properties', 'Property, ownership, listing-history, and market signals narrow the field.'],
+              ['02', 'We make the outreach relevant', 'The conversation starts with the actual property and the reason the timing may matter.'],
+              ['03', 'You meet interested homeowners', 'Choose the opportunities yourself—or let us qualify and schedule the appointment.'],
             ].map(([number, title, body]) => (
               <article key={number}>
                 <span>{number}</span>
@@ -240,9 +288,9 @@ export default function Home() {
             ))}
           </div>
           <div className={styles.clarityBar}>
-            <span><CheckIcon /> No giant unfiltered list</span>
-            <span><CheckIcon /> No fake instant territory approval</span>
-            <span><CheckIcon /> Written guarantee terms before enrollment</span>
+            <span><CheckIcon /> Property-specific opening</span>
+            <span><CheckIcon /> Seller intent qualification</span>
+            <span><CheckIcon /> Clear appointment handoff</span>
           </div>
         </div>
       </section>
@@ -251,10 +299,10 @@ export default function Home() {
         <div className={styles.sectionInner}>
           <div className={styles.planHeading}>
             <div>
-              <span className={styles.eyebrow}>Straightforward pricing</span>
-              <h2>Choose the amount of help you need.</h2>
+              <span className={styles.eyebrow}>Three ways to put the system to work</span>
+              <h2>Test it. Work it. Or let us run it.</h2>
             </div>
-            <p>Every plan is intentionally different. The $189 option is a smaller entry plan. The two full programs include 50 monthly opportunities and the written one-listing guarantee.</p>
+            <p>Start with a $279 monthly test pilot, take control of 50 monthly opportunities, or have our team handle the outreach and appointment setting for you.</p>
           </div>
 
           <div className={styles.planGrid}>
@@ -285,8 +333,8 @@ export default function Home() {
         <div className={styles.actionInner}>
           <div className={styles.guaranteePanel}>
             <span className={styles.eyebrow}>Clear terms, before you enroll</span>
-            <h2>A listing guarantee—not an earnings promise.</h2>
-            <p>The full programs guarantee one qualifying listing under the written agreement. The $189 Market Starter plan does not include that guarantee.</p>
+            <h2>A real program with clear responsibilities.</h2>
+            <p>The Agent-Driven and Done-for-You programs include one qualifying listing under the written agreement. The $279 Market Test Pilot is designed to prove the workflow first and does not include that guarantee.</p>
             <div className={styles.guaranteePoints}>
               {['Covered program period', 'Required activity standards', 'Definition of a qualifying listing', 'Exclusions and contractual remedy'].map((item) => <span key={item}><CheckIcon />{item}</span>)}
             </div>
@@ -349,7 +397,7 @@ export default function Home() {
         <small>© {new Date().getFullYear()} Leads By Storm. All rights reserved.</small>
       </footer>
 
-      <div className={styles.mobileCta}><button onClick={() => scrollToId('plans')}>Plans from $189/month <ArrowIcon /></button></div>
+      <div className={styles.mobileCta}><button onClick={() => scrollToId('plans')}>Start with the $279 test pilot <ArrowIcon /></button></div>
     </main>
   );
 }
