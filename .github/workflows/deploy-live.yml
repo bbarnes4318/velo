@@ -91,7 +91,7 @@ jobs:
           for attempt in {1..18}; do
             url="https://properties.leadsbystorm.com/?deployment_check=${GITHUB_SHA}-$(date +%s)-${attempt}"
             html="$(curl --fail --silent --show-error --location --max-time 20 -H 'Cache-Control: no-cache' -H 'Pragma: no-cache' "$url")"
-            if printf '%s' "$html" | grep -q 'Market Starter'; then
+            if printf '%s' "$html" | grep -q 'Market Test Pilot'; then
               echo 'Public deployment verification passed.'
               exit 0
             fi
