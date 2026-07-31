@@ -13,7 +13,7 @@ cd "$source_dir"
 git fetch --prune origin main
 git reset --hard origin/main
 printf 'source_commit=%s\n' "$(git rev-parse --short HEAD)"
-grep -R -F 'Market Starter' src >/dev/null
+grep -R -F 'Market Test Pilot' src >/dev/null
 grep -R -Fi 'one listing guaranteed' src >/dev/null
 echo 'current_funnel_markers=present'
 
@@ -49,7 +49,7 @@ if [ -d "$source_dir/public" ]; then
 else
   mkdir -p "$target_dir/public"
 fi
-grep -R -F 'Market Starter' "$target_dir/src" >/dev/null
+grep -R -F 'Market Test Pilot' "$target_dir/src" >/dev/null
 echo 'source_replacement=complete'
 
 echo '=== BUILD AND RECREATE TERRITORY-LOCK APP ==='
@@ -63,7 +63,7 @@ for attempt in {1..24}; do
   status="$(docker inspect -f '{{.State.Status}}' territory-lock-app 2>/dev/null || true)"
   body="$(curl -ksS --max-time 10 --resolve properties.leadsbystorm.com:443:127.0.0.1 https://properties.leadsbystorm.com/ 2>/dev/null || true)"
   printf 'attempt=%s status=%s\n' "$attempt" "$status"
-  if printf '%s' "$body" | grep -q 'Market Starter'; then
+  if printf '%s' "$body" | grep -q 'Market Test Pilot'; then
     echo 'local_https_verification=passed'
     trap - ERR
     find "$backup_root" -mindepth 1 -maxdepth 1 -type d -mtime +14 -exec rm -rf {} + 2>/dev/null || true
