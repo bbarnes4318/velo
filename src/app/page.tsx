@@ -108,10 +108,6 @@ const scenarios: Record<ScenarioId, {
 
 const faqs = [
   {
-    question: 'Do you use AI to call homeowners?',
-    answer: 'No. The Done-for-You outreach option is handled by real American representatives who are trained and experienced in homeowner conversations and listing-appointment conversion.',
-  },
-  {
     question: 'Do I have to use the appointment-setting service?',
     answer: 'No. Market Test Pilot and Agent-Driven give you the seller opportunities and property context so you can handle the outreach yourself. Appointment setting is available only when you choose Done-for-You.',
   },
@@ -209,7 +205,7 @@ export default function Home() {
         <div className={styles.heroInner}>
           <div className={styles.heroCopy}>
             <span className={styles.eyebrow}>Seller opportunities with optional appointment setting</span>
-            <h1>Find more potential sellers. Choose who starts the conversation.</h1>
+            <h1>Find the sellers before they become someone else’s listing.</h1>
             <p>
               We identify high-potential off-market sellers and give you the property intelligence to reach them. Work every opportunity yourself—or choose Done-for-You and let trained American representatives qualify interest and schedule listing appointments.
             </p>
@@ -219,7 +215,7 @@ export default function Home() {
             </div>
             <div className={styles.heroProof}>
               <div><strong>Your choice</strong><span>Work opportunities yourself</span></div>
-              <div><strong>100% human</strong><span>American outreach team available</span></div>
+              <div><strong>American reps</strong><span>Trained appointment setters</span></div>
               <div><strong>Optional</strong><span>Qualified appointment setting</span></div>
             </div>
           </div>
@@ -228,12 +224,12 @@ export default function Home() {
             <div className={styles.previewTop}>
               <div><span /><span /><span /></div>
               <small>Done-for-You outreach option</small>
-              <b>100% human</b>
+              <b>American reps</b>
             </div>
             <div className={styles.previewBody}>
               <div className={styles.previewHeading}>
                 <div><small>How trained representatives adapt</small><strong>Real people. Real conversations.</strong></div>
-                <span>No AI calling</span>
+                <span>Listing trained</span>
               </div>
               <div className={styles.scenarioTabs} role="tablist" aria-label="Prospect scenarios">
                 {(Object.keys(scenarios) as ScenarioId[]).map((id) => (
