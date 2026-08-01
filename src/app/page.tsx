@@ -16,6 +16,8 @@ type Plan = {
   detail: string;
   features: string[];
   guarantee: string;
+  mode: string;
+  outcome: string;
   featured?: boolean;
 };
 
@@ -26,7 +28,7 @@ const plans: Plan[] = [
     id: 'starter',
     label: 'Low-risk test pilot',
     title: 'Market Test Pilot',
-    description: 'Prove the system in your market with a focused monthly opportunity set before moving into a full program.',
+    description: 'A focused, month-to-month field test for agents who want to see the opportunity quality in their own market.',
     price: '$279',
     cadence: 'per month',
     detail: 'Month to month · built for a real-market test',
@@ -38,12 +40,14 @@ const plans: Plan[] = [
       'Upgrade to a full program at any time',
     ],
     guarantee: 'Entry plan · no protected territory or listing guarantee',
+    mode: 'Explore',
+    outcome: 'Validate the model in your market',
   },
   {
     id: 'agent',
-    label: 'For agents who want control',
+    label: 'Build your own pipeline',
     title: 'Agent-Driven',
-    description: 'We identify and organize the opportunities. You make the calls, build the relationship, and own every conversation.',
+    description: 'VelocityRE narrows the field. You control the outreach, the relationship, and every listing conversation.',
     price: '$949',
     cadence: 'per month',
     detail: 'You call and set your own appointments',
@@ -55,24 +59,29 @@ const plans: Plan[] = [
       'Protected local market',
     ],
     guarantee: 'One listing guaranteed under written terms',
+    mode: 'Operate',
+    outcome: 'Own the prospecting and the relationship',
     featured: true,
   },
   {
     id: 'concierge',
-    label: 'The complete appointment system',
+    label: 'Execution without added payroll',
     title: 'Done-for-You',
-    description: 'Trained American representatives handle real homeowner conversations, qualification, follow-up, and appointment scheduling.',
+    description: 'Our U.S.-based listing specialists work the outreach, qualify intent, manage follow-up, and schedule the appointment.',
     price: '$949',
     cadence: 'to start',
     detail: '+ $949 only when the first listing is secured',
     features: [
       'Everything in the Agent-Driven program',
-      'Outreach performed on your behalf',
-      'Prospect follow-up and appointment scheduling',
+      'U.S.-based listing outreach specialists',
+      'Qualification and appointment scheduling',
+      'Follow-up cadence managed for you',
       '50 new seller opportunities each month',
       'Protected local market',
     ],
     guarantee: 'One listing guaranteed under written terms',
+    mode: 'Delegate',
+    outcome: 'Step into qualified listing conversations',
   },
 ];
 
@@ -204,32 +213,32 @@ export default function Home() {
       <section className={`${styles.hero} ${styles.screenSection}`}>
         <div className={styles.heroInner}>
           <div className={styles.heroCopy}>
-            <span className={styles.eyebrow}>Seller opportunities with optional appointment setting</span>
+            <span className={styles.eyebrow}>Private seller intelligence for growth-minded agents</span>
             <h1>Find the sellers before they become someone else’s listing.</h1>
             <p>
-              We identify high-potential off-market sellers and give you the property intelligence to reach them. Work every opportunity yourself—or choose Done-for-You and let trained American representatives qualify interest and schedule listing appointments.
+              VelocityRE surfaces the homeowners worth pursuing before they raise their hand publicly. Work the opportunities in-house—or add our U.S.-based appointment team to qualify interest and put meetings on your calendar.
             </p>
             <div className={styles.heroActions}>
               <button className={styles.primaryButton} onClick={() => scrollToId('plans')}>Choose how you want to start <ArrowIcon /></button>
               <button className={styles.textButton} onClick={() => scrollToId('how')}>See the system at work</button>
             </div>
             <div className={styles.heroProof}>
-              <div><strong>Your choice</strong><span>Work opportunities yourself</span></div>
-              <div><strong>American reps</strong><span>Trained appointment setters</span></div>
-              <div><strong>Optional</strong><span>Qualified appointment setting</span></div>
+              <div><strong>Earlier signal</strong><span>Before broad-market competition</span></div>
+              <div><strong>Focused pipeline</strong><span>Only the opportunities worth working</span></div>
+              <div><strong>Flexible execution</strong><span>Your team—or our specialists</span></div>
             </div>
           </div>
 
           <div className={styles.previewCard} aria-label="Interactive illustration of the VelocityRE outreach process">
             <div className={styles.previewTop}>
               <div><span /><span /><span /></div>
-              <small>Done-for-You outreach option</small>
-              <b>American reps</b>
+              <small>Done-for-You conversation desk</small>
+              <b>U.S.-based team</b>
             </div>
             <div className={styles.previewBody}>
               <div className={styles.previewHeading}>
-                <div><small>How trained representatives adapt</small><strong>Real people. Real conversations.</strong></div>
-                <span>Listing trained</span>
+                <div><small>Property-aware outreach</small><strong>One property. One relevant conversation.</strong></div>
+                <span>Live specialists</span>
               </div>
               <div className={styles.scenarioTabs} role="tablist" aria-label="Prospect scenarios">
                 {(Object.keys(scenarios) as ScenarioId[]).map((id) => (
@@ -251,19 +260,19 @@ export default function Home() {
                   <div><small>Why now</small><strong>{scenarios[activeScenario].signal}</strong></div>
                 </div>
                 <div className={styles.conversationBubble}>
-                  <span>Representative’s conversation pivot</span>
+                  <span>Conversation strategy</span>
                   <p>“{scenarios[activeScenario].message}”</p>
                 </div>
                 <div className={styles.pipelineFlow}>
-                  <span>Property identified</span><ArrowIcon />
-                  <span>American rep calls</span><ArrowIcon />
+                  <span>Priority signal</span><ArrowIcon />
+                  <span>Specialist outreach</span><ArrowIcon />
                   <strong>{scenarios[activeScenario].outcome}</strong>
                 </div>
               </div>
               <div className={styles.previewFooter}>
-                <span><CheckIcon /> Trained American representatives</span>
-                <span><CheckIcon /> Listing-appointment experience</span>
-                <span><CheckIcon /> Real person-to-person outreach</span>
+                <span><CheckIcon /> U.S.-based specialists</span>
+                <span><CheckIcon /> Listing-appointment focus</span>
+                <span><CheckIcon /> Context before conversation</span>
               </div>
             </div>
             <p>Illustrative Done-for-You workflow. Representatives adapt each conversation naturally. Prospect responses and appointment results vary.</p>
@@ -273,16 +282,33 @@ export default function Home() {
 
       <section id="how" className={`${styles.section} ${styles.screenSection}`}>
         <div className={styles.sectionInner}>
-          <div className={styles.sectionIntro}>
-            <span className={styles.eyebrow}>One system. Two ways to work it.</span>
-            <h2>Get the opportunities—or get the appointments.</h2>
-            <p>Use VelocityRE as your focused off-market prospecting source, or add our human outreach team when you want qualified listing appointments placed in front of you.</p>
+          <div className={styles.advantageHeader}>
+            <div className={styles.sectionIntro}>
+              <span className={styles.eyebrow}>The timing advantage</span>
+              <h2>Stop arriving after the seller has already raised their hand.</h2>
+              <p>VelocityRE is built to move prospecting upstream—toward the ownership, property, financial, and listing signals that can surface before a public listing.</p>
+            </div>
+            <aside className={styles.marketInsight}>
+              <span>Why it matters</span>
+              <strong>Public intent attracts competition.</strong>
+              <p>Earlier intelligence gives you a chance to create the relationship before the seller becomes another name in everyone’s database.</p>
+            </aside>
+          </div>
+          <div className={styles.timingPanel} aria-label="Comparison of conventional lead timing and VelocityRE timing">
+            <div className={styles.timingLaneMuted}>
+              <div><span>Conventional lead flow</span><strong>React after intent is public</strong></div>
+              <ol><li>Seller raises hand</li><li>Lead circulates</li><li>Agents compete</li></ol>
+            </div>
+            <div className={styles.timingLaneActive}>
+              <div><span>VelocityRE advantage</span><strong>Act while the signal is developing</strong></div>
+              <ol><li>Signals change</li><li>Opportunity surfaces</li><li>Conversation begins</li></ol>
+            </div>
           </div>
           <div className={styles.steps}>
             {[
-              ['01', 'We identify the right properties', 'Property, ownership, listing-history, and market signals narrow the field.'],
-              ['02', 'You choose how they are worked', 'Call the opportunities yourself or add our trained American outreach team.'],
-              ['03', 'You control the next step', 'Build the relationship from the first call—or meet homeowners after we qualify and schedule them.'],
+              ['01', 'Spot the signal', 'Multiple data points narrow a broad market into a focused opportunity set.'],
+              ['02', 'Choose your operating model', 'Work the pipeline internally or add our appointment-setting specialists.'],
+              ['03', 'Own the conversation', 'Build the relationship early and move qualified interest toward the listing table.'],
             ].map(([number, title, body]) => (
               <article key={number}>
                 <span>{number}</span>
@@ -291,11 +317,6 @@ export default function Home() {
               </article>
             ))}
           </div>
-          <div className={styles.clarityBar}>
-            <span><CheckIcon /> Agent-driven prospecting</span>
-            <span><CheckIcon /> Human Done-for-You outreach</span>
-            <span><CheckIcon /> Optional appointment setting</span>
-          </div>
         </div>
       </section>
 
@@ -303,16 +324,20 @@ export default function Home() {
         <div className={styles.sectionInner}>
           <div className={styles.planHeading}>
             <div>
-              <span className={styles.eyebrow}>Three ways to put the system to work</span>
-              <h2>Test it. Work it. Or let us run it.</h2>
+              <span className={styles.eyebrow}>One system. Three levels of leverage.</span>
+              <h2>Choose the operating model that fits your business.</h2>
             </div>
-            <p>Start with a $279 monthly test pilot, work 50 monthly opportunities yourself, or choose Done-for-You appointment setting with our trained American representatives.</p>
+            <p>Validate the opportunity quality, build the pipeline yourself, or add an experienced U.S.-based team to execute the outreach for you.</p>
           </div>
 
           <div className={styles.planGrid}>
             {plans.map((plan) => (
               <article className={plan.featured ? styles.featuredPlan : ''} key={plan.id}>
                 {plan.featured && <span className={styles.popular}>Most popular</span>}
+                <div className={styles.planTopline}>
+                  <span>{String(plans.indexOf(plan) + 1).padStart(2, '0')}</span>
+                  <b>{plan.mode}</b>
+                </div>
                 <span className={styles.planLabel}>{plan.label}</span>
                 <h3>{plan.title}</h3>
                 <p className={styles.planDescription}>{plan.description}</p>
@@ -321,6 +346,7 @@ export default function Home() {
                   <span>{plan.cadence}</span>
                 </div>
                 <p className={styles.priceDetail}>{plan.detail}</p>
+                <div className={styles.planOutcome}><small>Designed to</small><strong>{plan.outcome}</strong></div>
                 <ul>
                   {plan.features.map((feature) => <li key={feature}><CheckIcon />{feature}</li>)}
                 </ul>
@@ -336,19 +362,27 @@ export default function Home() {
       <section id="territory" className={`${styles.actionSection} ${styles.screenSection}`}>
         <div className={styles.actionInner}>
           <div className={styles.guaranteePanel}>
-            <span className={styles.eyebrow}>Clear terms, before you enroll</span>
-            <h2>A real program with clear responsibilities.</h2>
-            <p>The Agent-Driven and Done-for-You programs include one qualifying listing under the written agreement. The $279 Market Test Pilot is designed to prove the workflow first and does not include that guarantee.</p>
+            <div className={styles.guaranteeLead}>
+              <div>
+                <span className={styles.eyebrow}>Performance, clearly defined</span>
+                <h2>A guarantee you can actually understand.</h2>
+                <p>Agent-Driven and Done-for-You include one qualifying listing under the written agreement. The Test Pilot is intentionally smaller and is not covered by the guarantee.</p>
+              </div>
+              <div className={styles.guaranteeMetric}>
+                <strong>1</strong>
+                <span>Qualifying listing<small>Guaranteed on full programs*</small></span>
+              </div>
+            </div>
             <div className={styles.guaranteePoints}>
-              {['Covered program period', 'Required activity standards', 'Definition of a qualifying listing', 'Exclusions and contractual remedy'].map((item) => <span key={item}><CheckIcon />{item}</span>)}
+              {['The covered program period', 'The activity required', 'What qualifies as a listing', 'The remedy if none is secured'].map((item) => <span key={item}><CheckIcon />{item}</span>)}
             </div>
           </div>
 
           <form className={styles.territoryForm} onSubmit={submitTerritory}>
-            <span className={styles.formStep}>Next step</span>
-            <h3>Check your primary market.</h3>
+            <span className={styles.formStep}>Territory review</span>
+            <h3>See if your market is open.</h3>
             <p>Selected plan: <strong>{selected.title}</strong> · {selected.price} {selected.cadence}</p>
-            <label htmlFor="primary-zip">Primary ZIP code</label>
+            <label htmlFor="primary-zip">Primary market ZIP</label>
             <input
               id="primary-zip"
               name="zip"
@@ -364,7 +398,7 @@ export default function Home() {
               placeholder="37909"
               aria-describedby={zipError ? 'zip-error' : 'zip-help'}
             />
-            {zipError ? <p id="zip-error" className={styles.zipError}>{zipError}</p> : <p id="zip-help" className={styles.zipHelp}>No payment is collected before the territory and program review.</p>}
+            {zipError ? <p id="zip-error" className={styles.zipError}>{zipError}</p> : <p id="zip-help" className={styles.zipHelp}>We review real territory availability before enrollment. No payment is collected here.</p>}
             <button type="submit" className={styles.primaryButton}>Continue with {selected.title} <ArrowIcon /></button>
             <button type="button" className={styles.changePlan} onClick={() => scrollToId('plans')}>Choose a different plan</button>
           </form>
@@ -374,8 +408,8 @@ export default function Home() {
       <section id="faq" className={styles.faqSection}>
         <div className={styles.faqInner}>
           <div>
-            <span className={styles.eyebrow}>Common questions</span>
-            <h2>Important answers, without the fine-print maze.</h2>
+            <span className={styles.eyebrow}>Before you choose a plan</span>
+            <h2>The questions serious agents ask.</h2>
           </div>
           <div className={styles.faqList}>
             {faqs.map((faq) => (
