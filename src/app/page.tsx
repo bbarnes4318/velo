@@ -56,7 +56,6 @@ export default function Home() {
       <header className={styles.header}>
         <button className={styles.brand} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <strong>VelocityRE<span>.pro</span></strong>
-          <small>by Leads By Storm</small>
         </button>
         <nav aria-label="Main navigation">
           <button onClick={() => scrollToId('how')}>How It Works</button>
@@ -175,7 +174,7 @@ export default function Home() {
       <footer className={styles.footer}>
         <div><strong>VelocityRE<span>.pro</span></strong><nav><a href="/terms">Program Terms</a><a href="/privacy">Privacy Policy</a><a href="/contact">Contact</a></nav></div>
         <p>Appointment delivery and program guarantees are subject to the written Pilot Program terms, market eligibility, and agent cooperation. No listing, closing, commission, earnings amount, or return is guaranteed. Users are responsible for compliance with applicable laws and brokerage policies.</p>
-        <small>© {new Date().getFullYear()} Leads By Storm. All rights reserved.</small>
+        <small>© {new Date().getFullYear()} VelocityRE. All rights reserved.</small>
       </footer>
       <div className={styles.mobileCta}><button onClick={() => scrollToId('apply')}>Apply for the Pilot Program <Arrow /></button></div>
     </main>
