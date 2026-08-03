@@ -24,7 +24,6 @@ export function LegalShell({
       <header className={styles.header}>
         <Link className={styles.brand} href="/">
           <strong>VelocityRE<span>.pro</span></strong>
-          <small>by Leads By Storm</small>
         </Link>
         <nav aria-label="Legal and contact navigation">
           <Link href="/terms">Terms</Link>
@@ -65,8 +64,8 @@ export function LegalShell({
           <strong>VelocityRE<span>.pro</span></strong>
           <nav><Link href="/terms">Terms</Link><Link href="/privacy">Privacy</Link><Link href="/contact">Contact</Link></nav>
         </div>
-        <p>VelocityRE.pro is operated by PVN LLC under the Leads By Storm brand.</p>
-        <small>© {new Date().getFullYear()} PVN LLC. All rights reserved.</small>
+        <p>Property intelligence and appointment support for real estate professionals.</p>
+        <small>© {new Date().getFullYear()} VelocityRE. All rights reserved.</small>
       </footer>
     </main>
   );

@@ -4,7 +4,7 @@ import styles from '../legal.module.css';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | VelocityRE.pro',
-  description: 'How VelocityRE.pro and PVN LLC collect, use, disclose, and protect personal information.',
+  description: 'How VelocityRE collects, uses, discloses, and protects personal information.',
 };
 
 const navItems = [
@@ -19,7 +19,7 @@ export default function PrivacyPage() {
     <LegalShell eyebrow="PRIVACY" title="Privacy Policy" summary="This Policy explains what information VelocityRE collects, where it comes from, how we use and disclose it, and the choices available to clients, property owners, prospects, and website visitors." updated="August 3, 2026" navItems={navItems}>
       <section id="scope">
         <h2>1. Scope</h2>
-        <p>This Privacy Policy applies to PVN LLC, the operator of VelocityRE.pro and the Leads By Storm brand (<strong>“VelocityRE,” “we,” “us,”</strong> or <strong>“our”</strong>). It covers our websites, applications, property intelligence, contact data, outreach and appointment-support services, pilot programs, and communications (collectively, the <strong>“Services”</strong>).</p>
+        <p>This Privacy Policy applies to VelocityRE (<strong>“VelocityRE,” “we,” “us,”</strong> or <strong>“our”</strong>). It covers our websites, applications, property intelligence, contact data, outreach and appointment-support services, pilot programs, and communications (collectively, the <strong>“Services”</strong>).</p>
         <p>It applies whether you are a real estate professional using the Services, a property owner or prospect whose information appears in our records, an applicant, or a website visitor. It does not govern a third party’s independent practices, including those of real estate professionals who receive information from us.</p>
       </section>
 
@@ -58,7 +58,7 @@ export default function PrivacyPage() {
       <section id="sale-sharing">
         <h2>6. Sale, Sharing, and Opt-Out Choices</h2>
         <p>The Services include providing property and contact information to approved real estate professionals. Depending on the law that applies to you, that disclosure may be considered a <strong>“sale,” “sharing,”</strong> or use for targeted advertising even when no money is exchanged for an individual record.</p>
-        <p>You may request to opt out of applicable sale or sharing by emailing <a href="mailto:support@leadsbystorm.com?subject=Privacy%20Opt-Out%20Request">support@leadsbystorm.com</a> with the subject <strong>“Privacy Opt-Out Request.”</strong> Include enough information for us to locate the relevant record, such as your name, property address, email address, and phone number. We will use that information only to verify, process, and maintain the request.</p>
+        <p>You may request to opt out of applicable sale or sharing by emailing <a href="mailto:support@velocityre.com?subject=Privacy%20Opt-Out%20Request">support@velocityre.com</a> with the subject <strong>“Privacy Opt-Out Request.”</strong> Include enough information for us to locate the relevant record, such as your name, property address, email address, and phone number. We will use that information only to verify, process, and maintain the request.</p>
         <p>You may also use a legally recognized browser-based opt-out preference signal, where applicable. We will process recognized signals as required by law, based on the browser or device that sends the signal.</p>
         <p className={styles.notice}><strong>Important:</strong> opting out through VelocityRE does not automatically remove information from public records, licensed databases, or the systems of independent third parties. You may need to contact those parties separately.</p>
       </section>
@@ -83,7 +83,7 @@ export default function PrivacyPage() {
       <section id="rights">
         <h2>10. Your Privacy Rights</h2>
         <p>Depending on your location and the law that applies, you may have rights to request access to, correction of, deletion of, or portability of personal information; obtain information about collection and disclosures; opt out of sale, sharing, or targeted advertising; limit certain uses of sensitive personal information; appeal a denied request; and receive equal service without unlawful discrimination for exercising a privacy right.</p>
-        <p>To submit a request, email <a href="mailto:support@leadsbystorm.com?subject=Privacy%20Rights%20Request">support@leadsbystorm.com</a> with the subject <strong>“Privacy Rights Request.”</strong> Describe the right you want to exercise and include enough information for us to locate and verify the relevant record. We may ask for additional information, and authorized agents may need to provide proof of authority. We will respond within the period required by applicable law.</p>
+        <p>To submit a request, email <a href="mailto:support@velocityre.com?subject=Privacy%20Rights%20Request">support@velocityre.com</a> with the subject <strong>“Privacy Rights Request.”</strong> Describe the right you want to exercise and include enough information for us to locate and verify the relevant record. We may ask for additional information, and authorized agents may need to provide proof of authority. We will respond within the period required by applicable law.</p>
         <p>Rights are subject to jurisdiction, verification, legal exceptions, and limits. If we cannot fulfill a request, we will explain the reason where required.</p>
       </section>
 
@@ -100,8 +100,8 @@ export default function PrivacyPage() {
       <section id="changes">
         <h2>13. Changes and Contact</h2>
         <p>We may update this Policy as our Services, data practices, providers, or legal obligations change. The “Effective date” identifies the latest version. We may provide additional notice of material changes where required.</p>
-        <p>For privacy questions, requests, or concerns, contact PVN LLC through the options below:</p>
-        <div className={styles.contactPanel}><a href="mailto:support@leadsbystorm.com?subject=VelocityRE%20Privacy"><strong>Privacy requests</strong><span>support@leadsbystorm.com</span></a><a href="/contact"><strong>Contact page</strong><span>Sales, support, privacy, and legal contacts</span></a></div>
+        <p>For privacy questions, requests, or concerns, contact VelocityRE through the options below:</p>
+        <div className={styles.contactPanel}><a href="mailto:support@velocityre.com?subject=VelocityRE%20Privacy"><strong>Privacy requests</strong><span>support@velocityre.com</span></a><a href="tel:+12012858699"><strong>Call VelocityRE</strong><span>201-285-8699</span></a></div>
       </section>
     </LegalShell>
   );

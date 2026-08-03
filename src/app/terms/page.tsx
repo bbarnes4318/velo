@@ -20,7 +20,7 @@ export default function TermsPage() {
     <LegalShell eyebrow="LEGAL" title="Terms of Service" summary="These Terms explain the rules that apply when you access VelocityRE, enroll in a Pilot Program, use property and contact data, or engage our outreach and appointment-support services." updated="August 3, 2026" navItems={navItems}>
       <section id="agreement">
         <h2>1. Agreement to These Terms</h2>
-        <p>These Terms of Service (the <strong>“Terms”</strong>) are a binding agreement between you and PVN LLC, the operator of VelocityRE.pro and the Leads By Storm brand (<strong>“VelocityRE,” “we,” “us,”</strong> or <strong>“our”</strong>). They govern your access to our websites, mobile or web applications, property intelligence, contact information, scripts, templates, appointment support, pilot programs, and related services (collectively, the <strong>“Services”</strong>).</p>
+        <p>These Terms of Service (the <strong>“Terms”</strong>) are a binding agreement between you and VelocityRE (<strong>“VelocityRE,” “we,” “us,”</strong> or <strong>“our”</strong>). They govern your access to our websites, mobile or web applications, property intelligence, contact information, scripts, templates, appointment support, pilot programs, and related services (collectively, the <strong>“Services”</strong>).</p>
         <p>By accessing the Services, submitting an application, enrolling, paying an invoice, or otherwise using the Services, you accept these Terms and our <a href="/privacy">Privacy Policy</a>. If you are accepting on behalf of a brokerage, team, company, or other entity, you represent that you have authority to bind that entity.</p>
       </section>
 
@@ -89,13 +89,13 @@ export default function TermsPage() {
 
       <section id="liability">
         <h2>12. Limitation of Liability</h2>
-        <p className={styles.caps}>To the fullest extent permitted by law, PVN LLC and its affiliates, owners, employees, contractors, licensors, and providers will not be liable for indirect, incidental, special, consequential, exemplary, or punitive damages; lost profits, commissions, revenue, data, goodwill, or business opportunities; or claims arising from third-party conduct, homeowner decisions, inaccurate records, regulatory action, carrier blocking, or service interruption.</p>
+        <p className={styles.caps}>To the fullest extent permitted by law, VelocityRE and its affiliates, owners, employees, contractors, licensors, and providers will not be liable for indirect, incidental, special, consequential, exemplary, or punitive damages; lost profits, commissions, revenue, data, goodwill, or business opportunities; or claims arising from third-party conduct, homeowner decisions, inaccurate records, regulatory action, carrier blocking, or service interruption.</p>
         <p className={styles.caps}>Our aggregate liability arising from the Services will not exceed the amount you paid to us for the specific Service giving rise to the claim during the three months immediately preceding the event. Some jurisdictions do not permit certain exclusions, so those exclusions apply only to the extent permitted.</p>
       </section>
 
       <section id="indemnity">
         <h2>13. Indemnification</h2>
-        <p>You will defend, indemnify, and hold harmless PVN LLC and its affiliates, owners, employees, contractors, licensors, and providers from claims, penalties, losses, judgments, liabilities, and reasonable legal fees arising from your communications, advertising, representations, legal or regulatory violations, misuse of data, breach of these Terms, infringement of rights, or conduct of anyone using your account.</p>
+        <p>You will defend, indemnify, and hold harmless VelocityRE and its affiliates, owners, employees, contractors, licensors, and providers from claims, penalties, losses, judgments, liabilities, and reasonable legal fees arising from your communications, advertising, representations, legal or regulatory violations, misuse of data, breach of these Terms, infringement of rights, or conduct of anyone using your account.</p>
       </section>
 
       <section id="termination">
@@ -112,7 +112,7 @@ export default function TermsPage() {
         <h2>16. Changes, Severability, and Contact</h2>
         <p>We may update these Terms to reflect changes in the Services, law, providers, or business practices. The “Effective date” identifies the latest version. Material changes may also be communicated through the Services or by email. Continued use after the effective date constitutes acceptance where permitted by law.</p>
         <p>If any provision is unenforceable, it will be modified to the minimum extent necessary and the remaining provisions will remain effective. These Terms, together with your written enrollment materials and incorporated policies, form the entire agreement regarding the Services and supersede prior statements on the same subject.</p>
-        <div className={styles.contactPanel}><a href="mailto:support@leadsbystorm.com?subject=VelocityRE%20Terms"><strong>Terms questions</strong><span>support@leadsbystorm.com</span></a><a href="/contact"><strong>Contact page</strong><span>Sales, support, privacy, and legal contacts</span></a></div>
+        <div className={styles.contactPanel}><a href="mailto:support@velocityre.com?subject=VelocityRE%20Terms"><strong>Terms questions</strong><span>support@velocityre.com</span></a><a href="tel:+12012858699"><strong>Call VelocityRE</strong><span>201-285-8699</span></a></div>
       </section>
     </LegalShell>
   );

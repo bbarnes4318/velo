@@ -56,7 +56,6 @@ export default function Home() {
       <header className={styles.header}>
         <button className={styles.brand} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
           <strong>VelocityRE<span>.pro</span></strong>
-          <small>by Leads By Storm</small>
         </button>
         <nav aria-label="Main navigation">
           <button onClick={() => scrollToId('how')}>How It Works</button>
@@ -69,7 +68,7 @@ export default function Home() {
         <div className={styles.heroInner}>
           <div className={styles.heroCopy}>
             <span className={styles.sectionLabel}>VELOCITYRE</span>
-            <h1>Stop Chasing Dead Leads. Start Closing Guaranteed Listing Appointments.</h1>
+            <h1><span>Stop Chasing Dead Leads. </span><span>Start Closing Guaranteed </span><span>Listing Appointments.</span></h1>
             <p>VelocityRE is the first intelligent off-market engine that scrubs failed listings, categorizes high-value targets, and hands you a complete package of appointments, dialed-in leads, and proven scripts.</p>
             <button className={styles.primaryButton} onClick={() => scrollToId('apply')}>Apply for the Pilot Program <Arrow /></button>
           </div>
@@ -175,7 +174,7 @@ export default function Home() {
       <footer className={styles.footer}>
         <div><strong>VelocityRE<span>.pro</span></strong><nav><a href="/terms">Program Terms</a><a href="/privacy">Privacy Policy</a><a href="/contact">Contact</a></nav></div>
         <p>Appointment delivery and program guarantees are subject to the written Pilot Program terms, market eligibility, and agent cooperation. No listing, closing, commission, earnings amount, or return is guaranteed. Users are responsible for compliance with applicable laws and brokerage policies.</p>
-        <small>© {new Date().getFullYear()} Leads By Storm. All rights reserved.</small>
+        <small>© {new Date().getFullYear()} VelocityRE. All rights reserved.</small>
       </footer>
       <div className={styles.mobileCta}><button onClick={() => scrollToId('apply')}>Apply for the Pilot Program <Arrow /></button></div>
     </main>
