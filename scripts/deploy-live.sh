@@ -13,9 +13,9 @@ cd "$source_dir"
 git fetch --prune origin main
 git reset --hard origin/main
 printf 'source_commit=%s\n' "$(git rev-parse --short HEAD)"
-grep -R -F 'Market Test Pilot' src >/dev/null
-grep -R -Fi 'one listing guaranteed' src >/dev/null
-echo 'current_funnel_markers=present'
+grep -R -F 'Pilot Package' src >/dev/null
+grep -R -F 'Walk into listing conversations' src >/dev/null
+echo 'pilot_funnel_markers=present'
 
 echo '=== BACK UP CURRENT LIVE APPLICATION ==='
 mkdir -p "$backup_dir"
@@ -49,7 +49,7 @@ if [ -d "$source_dir/public" ]; then
 else
   mkdir -p "$target_dir/public"
 fi
-grep -R -F 'Market Test Pilot' "$target_dir/src" >/dev/null
+grep -R -F 'Pilot Package' "$target_dir/src" >/dev/null
 echo 'source_replacement=complete'
 
 echo '=== BUILD AND RECREATE TERRITORY-LOCK APP ==='
