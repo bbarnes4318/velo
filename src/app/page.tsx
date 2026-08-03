@@ -68,7 +68,7 @@ export default function Home() {
         <div className={styles.heroInner}>
           <div className={styles.heroCopy}>
             <span className={styles.sectionLabel}>VELOCITYRE</span>
-            <h1>Stop Chasing Dead Leads. Start Closing Guaranteed Listing Appointments.</h1>
+            <h1><span>Stop Chasing Dead Leads. </span><span>Start Closing Guaranteed </span><span>Listing Appointments.</span></h1>
             <p>VelocityRE is the first intelligent off-market engine that scrubs failed listings, categorizes high-value targets, and hands you a complete package of appointments, dialed-in leads, and proven scripts.</p>
             <button className={styles.primaryButton} onClick={() => scrollToId('apply')}>Apply for the Pilot Program <Arrow /></button>
           </div>
