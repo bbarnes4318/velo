@@ -64,11 +64,11 @@ export default function Home() {
         <button className={styles.headerButton} onClick={() => scrollToId('apply')}>Apply for the Pilot Program</button>
       </header>
 
-      <section className={styles.hero}>
+      <section className={styles.hero} aria-labelledby="velocityre-hero-title">
         <div className={styles.heroInner}>
           <div className={styles.heroCopy}>
             <span className={styles.sectionLabel}>THE OFF-MARKET LISTING ENGINE</span>
-            <h1>More Listings. Less Prospecting.</h1>
+            <h1 id="velocityre-hero-title">More Listings. Less Prospecting.</h1>
             <p>VelocityRE does the groundwork and delivers 10–15 scrubbed properties, 5–10 premium email opportunities, and 1–2 face-to-face appointments—complete with the property intelligence, scripts, and contact paths you need to work them.</p>
             <button className={styles.primaryButton} onClick={() => scrollToId('apply')}>Apply for the $279 Pilot <Arrow /></button>
           </div>
