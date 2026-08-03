@@ -67,15 +67,10 @@ export default function Home() {
       <section className={styles.hero}>
         <div className={styles.heroInner}>
           <div className={styles.heroCopy}>
-            <span className={styles.sectionLabel}>THE OFF-MARKET LISTING ENGINE</span>
-            <h1>Turn Failed Listings Into Listing Appointments.</h1>
-            <p>VelocityRE does the groundwork. We scrub failed listings, identify the owners worth pursuing, rescue DNC-restricted opportunities through email, and deliver a complete, market-specific package directly to you.</p>
-            <div className={styles.heroMetrics}>
-              <div><strong>10–15</strong><span>Scrubbed Properties</span></div>
-              <div><strong>1–2</strong><span>Face-to-Face Appointments</span></div>
-              <div><strong>5–10</strong><span>Premium Email Leads</span></div>
-            </div>
-            <button className={styles.primaryButton} onClick={() => scrollToId('apply')}>Apply for the $279 Pilot <Arrow /></button>
+            <span className={styles.sectionLabel}>VELOCITYRE</span>
+            <h1><span>Stop Chasing Dead Leads. </span><span>Start Closing Guaranteed </span><span>Listing Appointments.</span></h1>
+            <p>VelocityRE is the first intelligent off-market engine that scrubs failed listings, categorizes high-value targets, and hands you a complete package of appointments, dialed-in leads, and proven scripts.</p>
+            <button className={styles.primaryButton} onClick={() => scrollToId('apply')}>Apply for the Pilot Program <Arrow /></button>
           </div>
 
           <div className={styles.productVisual} aria-label="VelocityRE mobile property map illustration">
