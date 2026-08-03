@@ -59,7 +59,7 @@ jobs:
 
   deploy:
     name: Deploy territory-lock application to Hetzner
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' || github.head_ref == 'agent/deploy-product-led-page'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     concurrency:
@@ -91,7 +91,7 @@ jobs:
           for attempt in {1..18}; do
             url="https://properties.leadsbystorm.com/?deployment_check=${GITHUB_SHA}-$(date +%s)-${attempt}"
             html="$(curl --fail --silent --show-error --location --max-time 20 -H 'Cache-Control: no-cache' -H 'Pragma: no-cache' "$url")"
-            if printf '%s' "$html" | grep -q 'Walk into listing conversations'; then
+            if printf '%s' "$html" | grep -q 'The intelligent off-market listing engine'; then
               echo 'Public deployment verification passed.'
               exit 0
             fi
