@@ -63,7 +63,7 @@ for attempt in {1..24}; do
   status="$(docker inspect -f '{{.State.Status}}' territory-lock-app 2>/dev/null || true)"
   body="$(curl -ksS --max-time 10 --resolve properties.leadsbystorm.com:443:127.0.0.1 https://properties.leadsbystorm.com/ 2>/dev/null || true)"
   printf 'attempt=%s status=%s\n' "$attempt" "$status"
-  if printf '%s' "$body" | grep -q 'Market Test Pilot'; then
+  if printf '%s' "$body" | grep -q 'Walk into listing conversations'; then
     echo 'local_https_verification=passed'
     trap - ERR
     find "$backup_root" -mindepth 1 -maxdepth 1 -type d -mtime +14 -exec rm -rf {} + 2>/dev/null || true
@@ -72,5 +72,5 @@ for attempt in {1..24}; do
   sleep 5
 done
 
-echo 'The rebuilt container did not serve the current three-plan page.'
+echo 'The rebuilt container did not serve the current pilot package.'
 exit 1
