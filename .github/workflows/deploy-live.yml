@@ -115,3 +115,18 @@ jobs:
           verify_page '/terms' 'Terms of Service'
           verify_page '/privacy' 'Privacy Policy'
           verify_page '/contact' 'Start a conversation'
+
+      - name: Verify VelocityRE identity publicly
+        shell: bash
+        run: |
+          set -euo pipefail
+          home="$(curl --fail --silent --show-error --location --max-time 20 -H 'Cache-Control: no-cache' "https://properties.leadsbystorm.com/?identity_check=${GITHUB_SHA}-$(date +%s)")"
+          contact="$(curl --fail --silent --show-error --location --max-time 20 -H 'Cache-Control: no-cache' "https://properties.leadsbystorm.com/contact?identity_check=${GITHUB_SHA}-$(date +%s)")"
+          printf '%s' "$home" | grep -q 'Stop Chasing Dead Leads'
+          printf '%s' "$contact" | grep -q 'support@velocityre.com'
+          printf '%s' "$contact" | grep -q '201-285-8699'
+          if printf '%s%s' "$home" "$contact" | grep -Eqi 'by Leads By Storm|PVN LLC|support@leadsbystorm.com'; then
+            echo '::error::Former company identity remains in the public site.'
+            exit 1
+          fi
+          echo 'VelocityRE identity verification passed.'
