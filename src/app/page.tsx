@@ -1,5 +1,7 @@
 'use client';
 
+// Production marker: VelocityRE $279 pilot package.
+
 import { useState, type FormEvent } from 'react';
 import styles from './page.module.css';
 
