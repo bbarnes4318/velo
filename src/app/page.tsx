@@ -1,136 +1,99 @@
 'use client';
 
-// Production marker: VelocityRE $279 pilot package.
-
 import { useState, type FormEvent } from 'react';
 import styles from './page.module.css';
 
 const CALENDLY_URL = 'https://calendly.com/leadsbystorm-support/30min';
 
-type FormState = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  brokerage: string;
-  market: string;
+type SignalId = 'expired' | 'corporate' | 'preforeclosure' | 'landlord';
+type FormState = { firstName: string; lastName: string; email: string; phone: string; brokerage: string; market: string };
+
+const signals: Record<SignalId, {
+  label: string;
+  address: string;
+  profile: string;
+  why: string;
+  action: string;
+  message: string;
+  className: string;
+}> = {
+  expired: {
+    label: 'Expired',
+    address: '3346 Treviso Cove',
+    profile: 'Owner occupied',
+    why: 'Listing expired 18 days ago · No deed transfer found',
+    action: 'Call strategy ready',
+    message: 'Are you taking a break from the market, or would you still consider selling if the right option came along?',
+    className: 'pinExpired',
+  },
+  corporate: {
+    label: 'Corporate',
+    address: '13065 Vista Verde Blvd',
+    profile: 'Corporate owned',
+    why: 'Recent listing did not close · Portfolio ownership confirmed',
+    action: 'Decision-maker path ready',
+    message: 'Are you planning to hold the property, or would you consider a different path to get it sold?',
+    className: 'pinCorporate',
+  },
+  preforeclosure: {
+    label: 'Time-sensitive',
+    address: '2035 Pauline Street',
+    profile: 'Public-record signal',
+    why: 'Failed listing · Time-sensitive public record activity detected',
+    action: 'Priority outreach ready',
+    message: 'Would you be open to looking at another option that could help get the property resolved on your timeline?',
+    className: 'pinPriority',
+  },
+  landlord: {
+    label: 'Landlord',
+    address: '4821 Crestwood Drive',
+    profile: 'Non-owner occupied',
+    why: 'Long-term ownership · Rental profile · Listing history match',
+    action: 'Email sequence ready',
+    message: 'Would selling the property make sense if the process were straightforward and the timing worked for you?',
+    className: 'pinLandlord',
+  },
 };
 
-const initialForm: FormState = {
-  firstName: '',
-  lastName: '',
-  email: '',
-  phone: '',
-  brokerage: '',
-  market: '',
-};
-
-const pilotContents = [
-  {
-    value: '10–15',
-    title: 'Scrubbed target properties',
-    body: 'Market-specific off-market opportunities selected for a real reason—not a recycled list.',
-  },
-  {
-    value: '1–2',
-    title: 'Face-to-face appointments',
-    body: 'Our outreach team works the package and books your first listing conversations for you.',
-  },
-  {
-    value: '5–10',
-    title: 'Email-ready opportunities',
-    body: 'DNC-restricted properties are rescued with verified email data and a property-specific template.',
-  },
+const engineSteps = [
+  ['01', 'The Velocity Scrub', 'Recent deed transfers and listing outcomes remove properties that already sold or no longer belong in the package.'],
+  ['02', 'Contact-Path Waterfall', 'Up to five phone numbers are screened. Callable records move forward; DNC-restricted properties move to email rescue.'],
+  ['03', 'Disposition Intelligence', 'Each property is categorized by the strongest reason an owner may be ready to make a move.'],
+  ['04', 'Action-Ready Delivery', 'The mobile map gives you the property context and the call strategy or email template for that exact situation.'],
 ];
 
-const process = [
-  {
-    number: '01',
-    title: 'Remove the dead ends',
-    body: 'We check recent deed transfers and listing history first, so properties that already sold never enter your package.',
-  },
-  {
-    number: '02',
-    title: 'Find a compliant path in',
-    body: 'We screen up to five phone numbers per property. Callable numbers move to outreach; DNC-restricted records move to email rescue.',
-  },
-  {
-    number: '03',
-    title: 'Explain why this property matters',
-    body: 'Every target is categorized by its strongest public signal—expired, corporate-owned, vacant, pre-foreclosure, or landlord-owned.',
-  },
-  {
-    number: '04',
-    title: 'Put the next move in your hand',
-    body: 'Open the property in the mobile app and use the call strategy or email template written for that specific situation.',
-  },
+const packageItems = [
+  ['10–15', 'Scrubbed target properties', 'Market-specific properties selected, verified, and ready to work.'],
+  ['1–2', 'Face-to-face appointments', 'Our internal team works the package and books your first listing conversations.'],
+  ['5–10', 'Premium email opportunities', 'DNC-restricted properties rescued with available email data and matched templates.'],
 ];
 
 const faqs = [
-  {
-    question: 'Is this another lead list?',
-    answer: 'No. A list gives you names and numbers. The pilot gives you a finished market package: scrubbed target properties, the reason each one was selected, compliant contact paths, property-specific outreach, and appointments worked by our team.',
-  },
-  {
-    question: 'What happens when a homeowner is on the DNC list?',
-    answer: 'That property is not discarded. We move it into the email-rescue track, provide the available email contact, and pair it with a property-specific email template. You are responsible for using all outreach tools in accordance with applicable law and your brokerage policies.',
-  },
-  {
-    question: 'What is guaranteed in the pilot?',
-    answer: 'The pilot includes 1–2 face-to-face appointments booked by our internal outreach team, subject to the written pilot terms, agent cooperation, and market eligibility. A listing, closing, commission, or return is not guaranteed.',
-  },
-  {
-    question: 'What happens after the pilot?',
-    answer: 'You choose the operating model that fits you: keep working a smaller market package, scale the number of opportunities, or have our team continue handling outreach and appointment setting.',
-  },
-  {
-    question: 'Will another agent receive the same package?',
-    answer: 'Pilot availability is limited by market so we can protect the usefulness of each package. Exact territory availability and boundaries are confirmed before enrollment.',
-  },
+  ['What exactly do I receive?', 'A market-specific pilot containing 10–15 scrubbed target properties, 1–2 face-to-face appointments, 5–10 email-ready opportunities, mobile map access, and property-specific call and email messaging.'],
+  ['Are these ordinary internet leads?', 'No. VelocityRE begins with property and ownership records, removes properties that no longer qualify, identifies the strongest seller situation, and builds a specific outreach path around each remaining property.'],
+  ['What happens when a phone number is on the DNC list?', 'We do not discard the property. It moves into the email-rescue path with the available email contact and a template matched to the property situation. You remain responsible for following applicable law and brokerage policy.'],
+  ['What is guaranteed?', 'The pilot includes 1–2 face-to-face appointments subject to the written pilot terms, market eligibility, and agent cooperation. A listing, closing, commission, homeowner response, or financial return is not guaranteed.'],
+  ['What happens after the pilot?', 'You choose the ongoing package that fits your business: work the opportunities yourself, increase the number of properties, or have our team continue outreach and appointment setting.'],
 ];
 
-function ArrowIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-6-6 6 6-6 6" />
-    </svg>
-  );
+function Arrow() {
+  return <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3"><path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-6-6 6 6-6 6" /></svg>;
 }
 
-function CheckIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-      <path strokeLinecap="round" strokeLinejoin="round" d="m5 12 4 4L19 6" />
-    </svg>
-  );
+function Check() {
+  return <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="m5 12 4 4L19 6" /></svg>;
 }
 
 function HomeIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path strokeLinecap="round" strokeLinejoin="round" d="m3 11 9-7 9 7v9H3v-9Z" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 20v-6h6v6" />
-    </svg>
-  );
+  return <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="m3 11 9-7 9 7v9H3v-9Z" /><path d="M9 20v-6h6v6" /></svg>;
 }
 
 function MailIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="3" y="5" width="18" height="14" rx="2" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="m4 7 8 6 8-6" />
-    </svg>
-  );
+  return <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m4 7 8 6 8-6" /></svg>;
 }
 
 function CalendarIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="3" y="5" width="18" height="16" rx="2" />
-      <path strokeLinecap="round" d="M8 3v4m8-4v4M3 10h18" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="m8 15 2 2 5-5" />
-    </svg>
-  );
+  return <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M8 3v4m8-4v4M3 10h18m-13 5 2 2 5-5" /></svg>;
 }
 
 function scrollToId(id: string) {
@@ -138,22 +101,22 @@ function scrollToId(id: string) {
 }
 
 export default function Home() {
-  const [form, setForm] = useState<FormState>(initialForm);
+  const [activeSignal, setActiveSignal] = useState<SignalId>('expired');
+  const [form, setForm] = useState<FormState>({ firstName: '', lastName: '', email: '', phone: '', brokerage: '', market: '' });
   const [error, setError] = useState('');
+  const active = signals[activeSignal];
 
-  const updateField = (field: keyof FormState, value: string) => {
+  const setField = (field: keyof FormState, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
     if (error) setError('');
   };
 
-  const submitApplication = (event: FormEvent<HTMLFormElement>) => {
+  const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     if (Object.values(form).some((value) => !value.trim())) {
       setError('Please complete every field so we can review your market.');
       return;
     }
-
     const destination = new URL(CALENDLY_URL);
     const incoming = new URLSearchParams(window.location.search);
     incoming.forEach((value, key) => destination.searchParams.set(key, value));
@@ -171,237 +134,101 @@ export default function Home() {
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <button className={styles.brand} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-          <strong>VelocityRE<span>.pro</span></strong>
-          <small>by Leads By Storm</small>
-        </button>
-        <nav aria-label="Main navigation">
-          <button onClick={() => scrollToId('package')}>What you get</button>
-          <button onClick={() => scrollToId('how')}>How it works</button>
-          <button onClick={() => scrollToId('faq')}>Questions</button>
-        </nav>
+        <button className={styles.brand} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}><strong>VelocityRE<span>.pro</span></strong><small>by Leads By Storm</small></button>
+        <nav aria-label="Main navigation"><button onClick={() => scrollToId('engine')}>The engine</button><button onClick={() => scrollToId('pilot')}>Pilot package</button><button onClick={() => scrollToId('faq')}>Questions</button></nav>
         <button className={styles.headerCta} onClick={() => scrollToId('apply')}>Apply for the pilot</button>
       </header>
 
       <section className={styles.hero}>
+        <div className={styles.heroGlow} />
         <div className={styles.heroInner}>
           <div className={styles.heroCopy}>
-            <span className={styles.eyebrow}>A done-with-you off-market listing pilot</span>
-            <h1>Walk into listing conversations—not another pile of leads.</h1>
-            <p>
-              VelocityRE turns failed and overlooked listings into a ready-to-work market package: scrubbed properties, the right contact path, property-specific outreach, and your first face-to-face appointments.
-            </p>
-            <div className={styles.heroActions}>
-              <button className={styles.primaryButton} onClick={() => scrollToId('apply')}>Apply for the $279 pilot <ArrowIcon /></button>
-              <button className={styles.secondaryButton} onClick={() => scrollToId('package')}>See exactly what is included</button>
-            </div>
-            <div className={styles.heroTrust}>
-              <span><CheckIcon /> Built for your market</span>
-              <span><CheckIcon /> Our team books appointments</span>
-              <span><CheckIcon /> Month-to-month pilot</span>
+            <span className={styles.kicker}><i />The intelligent off-market listing engine</span>
+            <h1>We build your off-market pipeline—and book the first appointments.</h1>
+            <p>VelocityRE scrubs failed listings, finds the right contact path, identifies why each owner may sell, and delivers a complete market package you can start working immediately.</p>
+            <div className={styles.heroActions}><button className={styles.primary} onClick={() => scrollToId('apply')}>Apply for the $279 pilot <Arrow /></button><button className={styles.secondary} onClick={() => scrollToId('engine')}>See the engine work</button></div>
+            <div className={styles.metrics}>
+              <div><strong>10–15</strong><span>Scrubbed targets</span></div>
+              <div><strong>1–2</strong><span>Appointments</span></div>
+              <div><strong>5–10</strong><span>Email opportunities</span></div>
             </div>
           </div>
 
-          <aside className={styles.productBox} aria-label="VelocityRE Pilot Package contents">
-            <div className={styles.boxHeader}>
-              <div><span>VelocityRE</span><strong>Pilot Package</strong></div>
-              <b>$279<small>/ month</small></b>
+          <div className={styles.appShell} aria-label="Interactive VelocityRE mobile market map">
+            <div className={styles.appTop}><div><span /><span /><span /></div><strong>VelocityRE · Fort Wayne</strong><b>15 targets</b></div>
+            <div className={styles.appBody}>
+              <div className={styles.map}>
+                <div className={styles.roadOne} /><div className={styles.roadTwo} /><div className={styles.roadThree} />
+                {(Object.keys(signals) as SignalId[]).map((id, index) => (
+                  <button key={id} aria-label={`View ${signals[id].label} property`} className={`${styles.mapPin} ${styles[signals[id].className]} ${styles[`pinPosition${index + 1}`]} ${activeSignal === id ? styles.pinActive : ''}`} onClick={() => setActiveSignal(id)}><HomeIcon /><span>{signals[id].label}</span></button>
+                ))}
+                <div className={styles.mapLabelOne}>Aboite</div><div className={styles.mapLabelTwo}>Fort Wayne</div>
+              </div>
+              <aside className={styles.propertyPanel}>
+                <div className={styles.panelStatus}><span>{active.label}</span><b>{active.action}</b></div>
+                <h2>{active.address}</h2><p>{active.profile}</p>
+                <div className={styles.signalBox}><small>WHY IT SURFACED</small><strong>{active.why}</strong></div>
+                <div className={styles.messageBox}><small>PROPERTY-SPECIFIC APPROACH</small><p>“{active.message}”</p></div>
+                <button onClick={() => scrollToId('apply')}>Open opportunity <Arrow /></button>
+              </aside>
             </div>
-            <div className={styles.boxBody}>
-              {pilotContents.map((item, index) => (
-                <div className={styles.boxItem} key={item.title}>
-                  <span>{index === 0 ? <HomeIcon /> : index === 1 ? <CalendarIcon /> : <MailIcon />}</span>
-                  <div><strong>{item.value}</strong><p>{item.title}</p></div>
-                  <CheckIcon />
-                </div>
-              ))}
-            </div>
-            <div className={styles.boxFooter}>
-              <span>One market-specific package</span>
-              <strong>You show up. We help create the opportunity.</strong>
-            </div>
-          </aside>
+            <div className={styles.appFooter}><span><i className={styles.legendOrange} />Expired</span><span><i className={styles.legendBlue} />Corporate</span><span><i className={styles.legendRed} />Time-sensitive</span><span><i className={styles.legendPurple} />Landlord</span></div>
+          </div>
         </div>
       </section>
 
-      <section className={styles.problemSection}>
+      <section id="engine" className={styles.engineSection}>
         <div className={styles.sectionInner}>
-          <div className={styles.problemCopy}>
-            <span className={styles.eyebrow}>Raw data is not a prospecting system</span>
-            <h2>The old way makes you do all the work before you can even start selling.</h2>
+          <div className={styles.sectionHeading}><div><span className={styles.kicker}><i />The VelocityRE engine</span><h2>From failed listing to agent-ready opportunity.</h2></div><p>Every property passes through the same four-stage system before it reaches your phone. The result is not a spreadsheet—it is a clear reason to reach out and the next action already prepared.</p></div>
+          <div className={styles.engineRail}>
+            {engineSteps.map(([number, title, body], index) => <article key={number}><div className={styles.stepIcon}>{index === 0 ? <HomeIcon /> : index === 1 ? <MailIcon /> : index === 2 ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="8" /><path d="m12 7 2 4 4 1-4 2-2 4-2-4-4-2 4-1 2-4Z" /></svg> : <CalendarIcon />}</div><span>{number}</span><h3>{title}</h3><p>{body}</p></article>)}
           </div>
-          <div className={styles.problemGrid}>
-            <article><b>01</b><strong>Shared and aged leads</strong><p>You arrive after the best agents have already called.</p></article>
-            <article><b>02</b><strong>Dead property records</strong><p>You waste time on homes that already sold or no longer fit.</p></article>
-            <article><b>03</b><strong>DNC dead ends</strong><p>A strong property gets discarded because no one built a compliant fallback.</p></article>
-            <article><b>04</b><strong>Generic scripts</strong><p>The homeowner hears a pitch that ignores why their property matters.</p></article>
+          <div className={styles.engineOutput}><span>FAILED LISTING DATA</span><Arrow /><span>VERIFIED PROPERTY</span><Arrow /><span>SELLER SITUATION</span><Arrow /><strong>READY-TO-WORK OPPORTUNITY</strong></div>
+        </div>
+      </section>
+
+      <section className={styles.rescueSection}>
+        <div className={styles.rescueInner}>
+          <div className={styles.rescueCopy}><span className={styles.kicker}><i />No Lead Left Behind</span><h2>A DNC number does not erase a valuable property.</h2><p>VelocityRE screens up to five phone numbers for a compliant calling path. If the property cannot be called, it moves into email rescue—preserving the opportunity and giving you a property-specific way to reach out.</p><ul><li><Check />Up to five numbers screened per property</li><li><Check />DNC-restricted records separated automatically</li><li><Check />Available owner email captured</li><li><Check />Matched email template delivered in the app</li></ul></div>
+          <div className={styles.waterfall}>
+            <div className={styles.waterfallTop}><span>CONTACT-PATH WATERFALL</span><b>Property retained</b></div>
+            <div className={styles.phoneStack}>{['Phone 01 · DNC', 'Phone 02 · DNC', 'Phone 03 · Invalid', 'Phone 04 · DNC', 'Phone 05 · No match'].map((phone, index) => <div key={phone}><span>{phone}</span><b>{index < 2 || index === 3 ? 'RESTRICTED' : 'REMOVED'}</b></div>)}</div>
+            <div className={styles.rescueArrow}><span>NO CALLABLE NUMBER</span><Arrow /></div>
+            <div className={styles.emailRecovered}><MailIcon /><div><small>EMAIL RESCUE COMPLETE</small><strong>Owner email + matched template</strong><p>Opportunity stays in your package.</p></div><Check /></div>
           </div>
         </div>
       </section>
 
-      <section id="package" className={styles.packageSection}>
-        <div className={styles.sectionInner}>
-          <div className={styles.sectionHeading}>
-            <div>
-              <span className={styles.eyebrow}>A product you can see, understand, and work</span>
-              <h2>Your complete $279 pilot package.</h2>
-            </div>
-            <p>No enormous database. No software to figure out alone. We build a focused package in your target market and help turn it into real conversations.</p>
+      <section id="pilot" className={styles.pilotSection}>
+        <div className={styles.pilotInner}>
+          <div className={styles.pilotIntro}><span className={styles.kicker}><i />The VelocityRE Pilot Package</span><h2>Everything needed to prove the system in your market.</h2><p>For $279 per month, we build the package, work the initial outreach, and put your first face-to-face listing conversations on the calendar.</p></div>
+          <div className={styles.packageVisual}>
+            <div className={styles.packageBand}><span>MARKET-SPECIFIC</span><strong>$279<small>/ month</small></strong><span>MONTH TO MONTH</span></div>
+            <div className={styles.packageContents}>{packageItems.map(([value, title, body], index) => <article key={title}><span>{index === 0 ? <HomeIcon /> : index === 1 ? <CalendarIcon /> : <MailIcon />}</span><div><b>{value}</b><h3>{title}</h3><p>{body}</p></div><Check /></article>)}</div>
+            <div className={styles.packageBottom}><span><Check />Mobile opportunity map</span><span><Check />Property-specific messaging</span><span><Check />Internal appointment team</span></div>
           </div>
-          <div className={styles.deliverableGrid}>
-            {pilotContents.map((item, index) => (
-              <article key={item.title}>
-                <div className={styles.deliverableTop}>
-                  <span>{index === 0 ? <HomeIcon /> : index === 1 ? <CalendarIcon /> : <MailIcon />}</span>
-                  <b>{item.value}</b>
-                </div>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-              </article>
-            ))}
-          </div>
-          <div className={styles.noLeadBar}>
-            <span><MailIcon /></span>
-            <div><small>No Lead Left Behind</small><strong>DNC does not have to mean dead opportunity.</strong></div>
-            <p>When calling is restricted, the property moves into an email-ready track with the available contact and a template matched to its situation.</p>
-          </div>
-        </div>
-      </section>
-
-      <section id="how" className={styles.howSection}>
-        <div className={styles.sectionInner}>
-          <div className={styles.sectionHeading}>
-            <div>
-              <span className={styles.eyebrow}>The Velocity Scrub</span>
-              <h2>Every property earns its place in your package.</h2>
-            </div>
-            <p>Our engine removes dead records, finds the right outreach route, and gives you a reason to call that sounds like it belongs to that property.</p>
-          </div>
-          <div className={styles.processGrid}>
-            {process.map((step) => (
-              <article key={step.number}>
-                <span>{step.number}</span>
-                <h3>{step.title}</h3>
-                <p>{step.body}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className={styles.boardSection}>
-        <div className={styles.boardInner}>
-          <div className={styles.boardCopy}>
-            <span className={styles.eyebrow}>Your market, turned into a working pipeline</span>
-            <h2>Open the app and know exactly what to do next.</h2>
-            <p>Every pin includes the property context, the strongest seller signal, and the correct next move—call, email, follow up, or walk into the appointment.</p>
-            <ul>
-              <li><CheckIcon /> Color-coded by seller situation</li>
-              <li><CheckIcon /> Call strategy matched to the property</li>
-              <li><CheckIcon /> Email fallback for restricted numbers</li>
-              <li><CheckIcon /> Appointment status in one view</li>
-            </ul>
-          </div>
-          <div className={styles.opportunityBoard} aria-label="Illustration of the VelocityRE opportunity pipeline">
-            <div className={styles.boardTop}>
-              <div><strong>Fort Wayne Pilot</strong><span>Opportunity Board</span></div>
-              <b>15 active properties</b>
-            </div>
-            <div className={styles.boardStats}>
-              <div><span>READY TO CALL</span><strong>8</strong><small>Safe contact path</small></div>
-              <div><span>EMAIL RESCUE</span><strong>5</strong><small>DNC fallback ready</small></div>
-              <div><span>APPOINTMENTS</span><strong>2</strong><small>Agent visit booked</small></div>
-            </div>
-            <div className={styles.propertyRows}>
-              <article>
-                <i className={styles.dotOrange} /><div><strong>3346 Treviso Cove</strong><span>Expired · Owner occupied</span></div><b>Call strategy ready</b>
-              </article>
-              <article>
-                <i className={styles.dotBlue} /><div><strong>13065 Vista Verde Blvd</strong><span>Corporate owned · Failed listing</span></div><b>Email rescued</b>
-              </article>
-              <article>
-                <i className={styles.dotGreen} /><div><strong>2035 Pauline Street</strong><span>Time-sensitive · Public record signal</span></div><b>Visit scheduled</b>
-              </article>
-            </div>
-            <div className={styles.boardFooter}><span>Scrubbed</span><ArrowIcon /><span>Contact path</span><ArrowIcon /><span>Property message</span><ArrowIcon /><strong>Appointment</strong></div>
-          </div>
-        </div>
-      </section>
-
-      <section className={styles.offerSection}>
-        <div className={styles.offerInner}>
-          <div className={styles.priceBlock}>
-            <span>VelocityRE Pilot</span>
-            <strong>$279<small>/ month</small></strong>
-            <p>Minimal risk. A real package. Real market feedback.</p>
-          </div>
-          <div className={styles.offerList}>
-            {['10–15 scrubbed target properties', '1–2 face-to-face appointments', '5–10 email-ready opportunities', 'Mobile opportunity map', 'Property-specific call and email messaging', 'Month-to-month pilot'].map((item) => <span key={item}><CheckIcon />{item}</span>)}
-          </div>
-          <div className={styles.offerAction}>
-            <p>After the pilot, keep it lean, scale the package, or let our team continue booking appointments.</p>
-            <button className={styles.lightButton} onClick={() => scrollToId('apply')}>See if my market qualifies <ArrowIcon /></button>
-          </div>
+          <div className={styles.afterPilot}><span>AFTER THE PILOT</span><p>Keep working a focused package yourself, scale the number of properties, or have our team continue booking appointments for you.</p><button onClick={() => scrollToId('apply')}>See if my market qualifies <Arrow /></button></div>
         </div>
       </section>
 
       <section id="apply" className={styles.applySection}>
         <div className={styles.applyInner}>
-          <div className={styles.applyCopy}>
-            <span className={styles.eyebrow}>Limited by market—not by fake countdowns</span>
-            <h2>Claim your market before another agent does.</h2>
-            <p>Tell us where you want to work. We will confirm availability, show you how the pilot fits your market, and walk through the next step.</p>
-            <div className={styles.applySummary}>
-              <strong>$279 pilot</strong>
-              <span>Market-specific package</span>
-              <span>No payment collected here</span>
-            </div>
-          </div>
-          <form className={styles.applicationForm} onSubmit={submitApplication}>
-            <div className={styles.formHeading}><span>01</span><div><strong>Pilot application</strong><small>Usually takes less than a minute</small></div></div>
-            <div className={styles.twoFields}>
-              <label>First name<input value={form.firstName} onChange={(event) => updateField('firstName', event.target.value)} autoComplete="given-name" /></label>
-              <label>Last name<input value={form.lastName} onChange={(event) => updateField('lastName', event.target.value)} autoComplete="family-name" /></label>
-            </div>
-            <div className={styles.twoFields}>
-              <label>Email address<input type="email" value={form.email} onChange={(event) => updateField('email', event.target.value)} autoComplete="email" /></label>
-              <label>Mobile phone<input type="tel" value={form.phone} onChange={(event) => updateField('phone', event.target.value)} autoComplete="tel" /></label>
-            </div>
-            <div className={styles.twoFields}>
-              <label>Brokerage name<input value={form.brokerage} onChange={(event) => updateField('brokerage', event.target.value)} autoComplete="organization" /></label>
-              <label>Target market / city<input value={form.market} onChange={(event) => updateField('market', event.target.value)} placeholder="Fort Wayne, IN" /></label>
-            </div>
-            {error && <p className={styles.formError}>{error}</p>}
-            <button className={styles.primaryButton} type="submit">See if I qualify <ArrowIcon /></button>
-            <small className={styles.formNote}>By continuing, you agree to be contacted about the VelocityRE Pilot. No payment is collected on this form.</small>
+          <div className={styles.applyCopy}><span className={styles.kicker}><i />Pilot markets are limited</span><h2>See if your market is available.</h2><p>Send us your target city. We will confirm availability and show you what the first VelocityRE package would look like in your market.</p><div className={styles.applyProof}><div><strong>$279</strong><span>Monthly pilot</span></div><div><strong>1–2</strong><span>Appointments included*</span></div><div><strong>0</strong><span>Payment collected here</span></div></div></div>
+          <form className={styles.form} onSubmit={submit}>
+            <div className={styles.formTitle}><span>VELOCITYRE PILOT</span><strong>Market application</strong><small>Complete the form to continue to scheduling.</small></div>
+            <div className={styles.formRow}><label>First name<input value={form.firstName} onChange={(e) => setField('firstName', e.target.value)} autoComplete="given-name" /></label><label>Last name<input value={form.lastName} onChange={(e) => setField('lastName', e.target.value)} autoComplete="family-name" /></label></div>
+            <div className={styles.formRow}><label>Email address<input type="email" value={form.email} onChange={(e) => setField('email', e.target.value)} autoComplete="email" /></label><label>Mobile phone<input type="tel" value={form.phone} onChange={(e) => setField('phone', e.target.value)} autoComplete="tel" /></label></div>
+            <div className={styles.formRow}><label>Brokerage name<input value={form.brokerage} onChange={(e) => setField('brokerage', e.target.value)} autoComplete="organization" /></label><label>Target market / city<input value={form.market} onChange={(e) => setField('market', e.target.value)} placeholder="Fort Wayne, IN" /></label></div>
+            {error && <p className={styles.error}>{error}</p>}
+            <button className={styles.primary} type="submit">See if I qualify <Arrow /></button><small className={styles.formNote}>By continuing, you agree to be contacted about the VelocityRE Pilot. No payment is collected on this form.</small>
           </form>
         </div>
       </section>
 
-      <section id="faq" className={styles.faqSection}>
-        <div className={styles.faqInner}>
-          <div><span className={styles.eyebrow}>Straight answers</span><h2>Before you apply.</h2></div>
-          <div className={styles.faqList}>
-            {faqs.map((faq) => (
-              <details key={faq.question}>
-                <summary>{faq.question}<span>+</span></summary>
-                <p>{faq.answer}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
+      <section id="faq" className={styles.faqSection}><div className={styles.faqInner}><div><span className={styles.kicker}><i />Straight answers</span><h2>What agents need to know.</h2></div><div className={styles.faqList}>{faqs.map(([question, answer]) => <details key={question}><summary>{question}<span>+</span></summary><p>{answer}</p></details>)}</div></div></section>
 
-      <footer className={styles.footer}>
-        <div className={styles.footerTop}>
-          <strong>VelocityRE<span>.pro</span></strong>
-          <nav><a href="/terms">Program Terms</a><a href="/privacy">Privacy Policy</a><a href="mailto:support@leadsbystorm.com?subject=VelocityRE.pro%20Pilot">Contact</a></nav>
-        </div>
-        <p>VelocityRE.pro provides data-driven prospecting opportunities and outreach support. Appointment delivery is subject to written pilot terms, market eligibility, and agent cooperation. No homeowner response, listing, closing, commission, earnings amount, or return is guaranteed. Users are responsible for compliance with applicable laws and brokerage policies.</p>
-        <small>© {new Date().getFullYear()} Leads By Storm. All rights reserved.</small>
-      </footer>
-
-      <div className={styles.mobileCta}><button onClick={() => scrollToId('apply')}>Apply for the $279 pilot <ArrowIcon /></button></div>
+      <footer className={styles.footer}><div><strong>VelocityRE<span>.pro</span></strong><nav><a href="/terms">Program Terms</a><a href="/privacy">Privacy Policy</a><a href="mailto:support@leadsbystorm.com?subject=VelocityRE.pro%20Pilot">Contact</a></nav></div><p>VelocityRE.pro provides data-driven prospecting opportunities and outreach support. Appointment delivery is subject to written pilot terms, market eligibility, and agent cooperation. No homeowner response, listing, closing, commission, earnings amount, or return is guaranteed. Users are responsible for compliance with applicable laws and brokerage policies.</p><small>© {new Date().getFullYear()} Leads By Storm. All rights reserved.</small></footer>
+      <div className={styles.mobileCta}><button onClick={() => scrollToId('apply')}>Apply for the $279 pilot <Arrow /></button></div>
     </main>
   );
 }
