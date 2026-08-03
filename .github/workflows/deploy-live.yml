@@ -99,3 +99,19 @@ jobs:
           done
           echo '::error::The public domain did not return the current pilot package.'
           exit 1
+
+      - name: Verify legal and contact pages publicly
+        shell: bash
+        run: |
+          set -euo pipefail
+          verify_page() {
+            path="$1"
+            marker="$2"
+            url="https://properties.leadsbystorm.com${path}?deployment_check=${GITHUB_SHA}-$(date +%s)"
+            html="$(curl --fail --silent --show-error --location --max-time 20 -H 'Cache-Control: no-cache' -H 'Pragma: no-cache' "$url")"
+            printf '%s' "$html" | grep -q "$marker"
+            echo "Verified ${path}"
+          }
+          verify_page '/terms' 'Terms of Service'
+          verify_page '/privacy' 'Privacy Policy'
+          verify_page '/contact' 'Start a conversation'
