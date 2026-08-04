@@ -75,7 +75,7 @@ export default function Home() {
               <div><strong>1–2</strong><span>Face-to-Face Appointments</span></div>
               <div><strong>5–10</strong><span>Premium Email Leads</span></div>
             </div>
-            <button className={styles.primaryButton} onClick={() => scrollToId('apply')}>Apply for the $279 Pilot <Arrow /></button>
+            <button className={styles.primaryButton} onClick={() => scrollToId('apply')}>Check My Market & Pilot Price <Arrow /></button>
           </div>
 
           <div className={styles.productVisual} aria-label="VelocityRE mobile property map illustration">
@@ -140,10 +140,10 @@ export default function Home() {
               <span className={styles.sectionLabel}>THE PILOT PROGRAM PACKAGE</span>
               <h2>The VelocityRE Pilot Package: Minimal Risk. Guaranteed Results.</h2>
             </div>
-            <div className={styles.price}><strong>$279</strong><span>PER MONTH</span></div>
+            <div className={styles.price}><strong>$279–$479</strong><span>PER MONTH · BASED ON MARKET</span></div>
           </div>
-          <p className={styles.pilotLead}>We know the biggest risk for agents is buying a system and struggling to execute. To prove our engine works, we are launching a heavily discounted Pilot Program in select markets for just a few hundred dollars.</p>
-          <p className={styles.pilotLead}>We aren&apos;t just giving you access to an app. We customize a complete, market-specific package designed to guarantee ROI.</p>
+          <p className={styles.pilotLead}>Every VelocityRE pilot is built around the actual opportunity available in your target market. Monthly pilot pricing ranges from $279 to $479, based on the market and the custom package we can support there.</p>
+          <p className={styles.pilotLead}>Because we deliver a concentrated supply of highly prequalified properties—not shared lists—we can invite only a limited number of pilot agents in each market. If your market is available, we&apos;ll confirm your exact package and price before you enroll.</p>
           <h3 className={styles.includesTitle}>Your Pilot Package Includes:</h3>
           <div className={styles.packageGrid}>
             <article><strong>10 to 15</strong><h3>Highly-Targeted, Scrubbed Properties:</h3><p>Ready-to-close off-market targets pushed directly to your app.</p></article>
@@ -159,7 +159,7 @@ export default function Home() {
           <div className={styles.applyCopy}>
             <span className={styles.sectionLabel}>FINAL STEP</span>
             <h2>Claim Your Market Before Your Competitors Do.</h2>
-            <p>We are strictly limiting the number of agents in our Pilot Program to ensure massive value and market exclusivity. Enter your info below to see if your market is still available and schedule a 5-minute intro call.</p>
+            <p>The supply of highly prequalified properties is different in every market, so each pilot is customized and availability is limited. Enter your information to check your market, receive your exact package, and confirm your exact monthly pilot price within the $279–$479 range.</p>
           </div>
           <form className={styles.form} onSubmit={submit}>
             <div className={styles.formRow}>
@@ -171,7 +171,7 @@ export default function Home() {
             <label>Brokerage Name<input value={form.brokerage} onChange={(e) => update('brokerage', e.target.value)} autoComplete="organization" /></label>
             <label>Target Market / City<input value={form.market} onChange={(e) => update('market', e.target.value)} placeholder="Fort Wayne, IN" /></label>
             {error && <p className={styles.error}>{error}</p>}
-            <button className={styles.primaryButton} type="submit">See If I Qualify <Arrow /></button>
+            <button className={styles.primaryButton} type="submit">Check My Market & Pricing <Arrow /></button>
           </form>
         </div>
       </section>
