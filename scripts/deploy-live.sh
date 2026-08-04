@@ -14,7 +14,7 @@ git fetch --prune origin main
 git reset --hard origin/main
 printf 'source_commit=%s\n' "$(git rev-parse --short HEAD)"
 grep -R -F 'Pilot Package' src >/dev/null
-grep -R -F 'Stop Chasing Dead Leads' src >/dev/null
+grep -R -F 'Turn Failed Listings Into Listing Appointments' src >/dev/null
 echo 'pilot_funnel_markers=present'
 
 echo '=== BACK UP CURRENT LIVE APPLICATION ==='
@@ -63,7 +63,7 @@ for attempt in {1..24}; do
   status="$(docker inspect -f '{{.State.Status}}' territory-lock-app 2>/dev/null || true)"
   body="$(curl -ksS --max-time 10 --resolve properties.leadsbystorm.com:443:127.0.0.1 https://properties.leadsbystorm.com/ 2>/dev/null || true)"
   printf 'attempt=%s status=%s\n' "$attempt" "$status"
-  if printf '%s' "$body" | grep -q 'Stop Chasing Dead Leads'; then
+  if printf '%s' "$body" | grep -q 'Turn Failed Listings Into Listing Appointments'; then
     echo 'local_https_verification=passed'
     trap - ERR
     find "$backup_root" -mindepth 1 -maxdepth 1 -type d -mtime +14 -exec rm -rf {} + 2>/dev/null || true
